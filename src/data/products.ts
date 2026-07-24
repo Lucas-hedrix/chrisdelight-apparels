@@ -1,3 +1,47 @@
+import img_1 from '../assets/IMG_6229.PNG';
+import img_2 from '../assets/IMG_6230.PNG';
+import img_3 from '../assets/IMG_6231.PNG';
+import img_4 from '../assets/IMG_6233.PNG';
+import img_5 from '../assets/IMG_6234.PNG';
+import img_6 from '../assets/IMG_6235.PNG';
+import img_7 from '../assets/IMG_6236.PNG';
+import img_8 from '../assets/IMG_6237.PNG';
+import img_9 from '../assets/IMG_6238.PNG';
+import img_10 from '../assets/IMG_6239.PNG';
+import img_11 from '../assets/IMG_6240.PNG';
+import img_12 from '../assets/IMG_6241.PNG';
+import img_13 from '../assets/IMG_6242.PNG';
+import img_14 from '../assets/IMG_6243.PNG';
+import img_15 from '../assets/IMG_6244.PNG';
+import img_16 from '../assets/IMG_6245.PNG';
+import img_17 from '../assets/IMG_6246.PNG';
+import img_18 from '../assets/IMG_6247.PNG';
+import img_19 from '../assets/IMG_6248.PNG';
+import img_20 from '../assets/cargo_1.jpg';
+import img_21 from '../assets/cargo_10.jpg';
+import img_22 from '../assets/cargo_11.jpg';
+import img_23 from '../assets/cargo_14.jpg';
+import img_24 from '../assets/cargo_15.jpg';
+import img_25 from '../assets/cargo_16.jpg';
+import img_26 from '../assets/cargo_17.jpg';
+import img_27 from '../assets/cargo_18.jpg';
+import img_28 from '../assets/cargo_19.jpg';
+import img_29 from '../assets/cargo_4.jpg';
+import img_30 from '../assets/cargo_6.jpg';
+import img_31 from '../assets/cargo_7.jpg';
+import img_32 from '../assets/cargo_8.jpg';
+import img_33 from '../assets/cargo_9.jpg';
+import img_34 from '../assets/tshirt_1.jpg';
+import img_35 from '../assets/tshirt_10.jpg';
+import img_36 from '../assets/tshirt_12.jpg';
+import img_37 from '../assets/tshirt_16.jpg';
+import img_38 from '../assets/tshirt_18.jpg';
+import img_39 from '../assets/tshirt_2.jpg';
+import img_40 from '../assets/tshirt_3.jpg';
+import img_41 from '../assets/tshirt_5.jpg';
+import img_42 from '../assets/tshirt_7.jpg';
+import img_43 from '../assets/tshirt_9.jpg';
+
 export interface Product {
   id: string;
   name: string;
@@ -17,76 +61,47 @@ export interface CartItem {
 }
 
 export const products: Product[] = [
-  { 
-    id: '1', 
-    name: 'Vintage Wash Wrapper', 
-    price: 85, 
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80', 
-    availableSizes: ['One Size'], 
-    availableColors: ['Pink', 'Gray'], 
-    category: 'wrapper' 
-  },
-  { 
-    id: '2', 
-    name: 'Everyday Essentials Tee', 
-    price: 45, 
-    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80', 
-    availableSizes: ['S', 'M', 'L', 'XL'], 
-    availableColors: ['Black', 'White'], 
-    category: 't-shirts' 
-  },
-  { 
-    id: '3', 
-    name: 'Heavyweight Cargo Pants', 
-    price: 120, 
-    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80', 
-    availableSizes: ['S', 'M', 'L', 'XL'], 
-    availableColors: ['Olive', 'Black'], 
-    category: 'cargo' 
-  },
-  { 
-    id: '4', 
-    name: 'Premium Hoodie', 
-    price: 95, 
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80', 
-    availableSizes: ['S', 'M', 'L', 'XL'], 
-    availableColors: ['Gray', 'Black'], 
-    category: 'hoodies' 
-  },
-  { 
-    id: '5', 
-    name: 'Utility Vest', 
-    price: 110, 
-    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80', 
-    availableSizes: ['M', 'L'], 
-    availableColors: ['Black', 'Beige'], 
-    category: 'outerwear' 
-  },
-  { 
-    id: '6', 
-    name: 'Relaxed Fit Jeans', 
-    price: 130, 
-    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&q=80', 
-    availableSizes: ['30', '32', '34', '36'], 
-    availableColors: ['Light Blue', 'Washed Black'], 
-    category: 'denim' 
-  },
-  { 
-    id: '7', 
-    name: 'Oversized Graphic Tee', 
-    price: 55, 
-    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&q=80', 
-    availableSizes: ['S', 'M', 'L', 'XL'], 
-    availableColors: ['White', 'Off-White'], 
-    category: 't-shirts' 
-  },
-  { 
-    id: '8', 
-    name: 'Minimalist Track Pants', 
-    price: 75, 
-    image: 'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80', 
-    availableSizes: ['S', 'M', 'L'], 
-    availableColors: ['Black', 'Navy'], 
-    category: 'pants' 
-  }
+  { id: '1', name: 'Vintage Wash Wrapper', price: 85, image: img_1, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '2', name: 'Vintage Wash Wrapper', price: 85, image: img_2, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '3', name: 'Vintage Wash Wrapper', price: 85, image: img_3, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '4', name: 'Vintage Wash Wrapper', price: 85, image: img_4, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '5', name: 'Vintage Wash Wrapper', price: 85, image: img_5, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '6', name: 'Vintage Wash Wrapper', price: 85, image: img_6, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '7', name: 'Vintage Wash Wrapper', price: 85, image: img_7, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '8', name: 'Vintage Wash Wrapper', price: 85, image: img_8, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '9', name: 'Vintage Wash Wrapper', price: 85, image: img_9, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '10', name: 'Vintage Wash Wrapper', price: 85, image: img_10, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '11', name: 'Vintage Wash Wrapper', price: 85, image: img_11, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '12', name: 'Vintage Wash Wrapper', price: 85, image: img_12, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '13', name: 'Vintage Wash Wrapper', price: 85, image: img_13, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '14', name: 'Vintage Wash Wrapper', price: 85, image: img_14, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '15', name: 'Vintage Wash Wrapper', price: 85, image: img_15, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '16', name: 'Vintage Wash Wrapper', price: 85, image: img_16, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '17', name: 'Vintage Wash Wrapper', price: 85, image: img_17, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '18', name: 'Vintage Wash Wrapper', price: 85, image: img_18, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '19', name: 'Vintage Wash Wrapper', price: 85, image: img_19, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
+  { id: '20', name: 'Heavyweight Cargo Pants', price: 120, image: img_20, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '21', name: 'Heavyweight Cargo Pants', price: 120, image: img_21, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '22', name: 'Heavyweight Cargo Pants', price: 120, image: img_22, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '23', name: 'Heavyweight Cargo Pants', price: 120, image: img_23, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '24', name: 'Heavyweight Cargo Pants', price: 120, image: img_24, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '25', name: 'Heavyweight Cargo Pants', price: 120, image: img_25, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '26', name: 'Heavyweight Cargo Pants', price: 120, image: img_26, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '27', name: 'Heavyweight Cargo Pants', price: 120, image: img_27, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '28', name: 'Heavyweight Cargo Pants', price: 120, image: img_28, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '29', name: 'Heavyweight Cargo Pants', price: 120, image: img_29, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '30', name: 'Heavyweight Cargo Pants', price: 120, image: img_30, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '31', name: 'Heavyweight Cargo Pants', price: 120, image: img_31, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '32', name: 'Heavyweight Cargo Pants', price: 120, image: img_32, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '33', name: 'Heavyweight Cargo Pants', price: 120, image: img_33, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'others' },
+  { id: '34', name: 'Everyday Essentials Tee', price: 45, image: img_34, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '35', name: 'Everyday Essentials Tee', price: 45, image: img_35, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '36', name: 'Everyday Essentials Tee', price: 45, image: img_36, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '37', name: 'Everyday Essentials Tee', price: 45, image: img_37, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '38', name: 'Everyday Essentials Tee', price: 45, image: img_38, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '39', name: 'Everyday Essentials Tee', price: 45, image: img_39, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '40', name: 'Everyday Essentials Tee', price: 45, image: img_40, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '41', name: 'Everyday Essentials Tee', price: 45, image: img_41, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '42', name: 'Everyday Essentials Tee', price: 45, image: img_42, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
+  { id: '43', name: 'Everyday Essentials Tee', price: 45, image: img_43, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 'others' },
 ];
