@@ -1,46 +1,44 @@
-import img_1 from '../assets/IMG_6229.PNG';
-import img_2 from '../assets/IMG_6230.PNG';
-import img_3 from '../assets/IMG_6231.PNG';
-import img_4 from '../assets/IMG_6233.PNG';
-import img_5 from '../assets/IMG_6234.PNG';
-import img_6 from '../assets/IMG_6235.PNG';
-import img_7 from '../assets/IMG_6236.PNG';
-import img_8 from '../assets/IMG_6237.PNG';
-import img_9 from '../assets/IMG_6238.PNG';
-import img_10 from '../assets/IMG_6239.PNG';
-import img_11 from '../assets/IMG_6240.PNG';
-import img_12 from '../assets/IMG_6241.PNG';
-import img_13 from '../assets/IMG_6242.PNG';
-import img_14 from '../assets/IMG_6243.PNG';
-import img_15 from '../assets/IMG_6244.PNG';
-import img_16 from '../assets/IMG_6245.PNG';
-import img_17 from '../assets/IMG_6246.PNG';
-import img_18 from '../assets/IMG_6247.PNG';
-import img_19 from '../assets/IMG_6248.PNG';
-import img_20 from '../assets/cargo_1.jpg';
-import img_21 from '../assets/cargo_10.jpg';
-import img_22 from '../assets/cargo_11.jpg';
-import img_23 from '../assets/cargo_14.jpg';
-import img_24 from '../assets/cargo_15.jpg';
-import img_25 from '../assets/cargo_16.jpg';
-import img_26 from '../assets/cargo_17.jpg';
-import img_27 from '../assets/cargo_18.jpg';
-import img_28 from '../assets/cargo_19.jpg';
-import img_29 from '../assets/cargo_4.jpg';
-import img_30 from '../assets/cargo_6.jpg';
-import img_31 from '../assets/cargo_7.jpg';
-import img_32 from '../assets/cargo_8.jpg';
-import img_33 from '../assets/cargo_9.jpg';
-import img_34 from '../assets/tshirt_1.jpg';
-import img_35 from '../assets/tshirt_10.jpg';
-import img_36 from '../assets/tshirt_12.jpg';
-import img_37 from '../assets/tshirt_16.jpg';
-import img_38 from '../assets/tshirt_18.jpg';
-import img_39 from '../assets/tshirt_2.jpg';
-import img_40 from '../assets/tshirt_3.jpg';
-import img_41 from '../assets/tshirt_5.jpg';
-import img_42 from '../assets/tshirt_7.jpg';
-import img_43 from '../assets/tshirt_9.jpg';
+import img_1 from '../assets/wrappers/IMG_6229.PNG';
+import img_2 from '../assets/wrappers/IMG_6230.PNG';
+import img_3 from '../assets/wrappers/IMG_6231.PNG';
+import img_4 from '../assets/wrappers/IMG_6233.PNG';
+import img_5 from '../assets/wrappers/IMG_6234.PNG';
+import img_6 from '../assets/wrappers/IMG_6235.PNG';
+import img_7 from '../assets/wrappers/IMG_6236.PNG';
+import img_8 from '../assets/wrappers/IMG_6237.PNG';
+import img_9 from '../assets/wrappers/IMG_6238.PNG';
+import img_10 from '../assets/wrappers/IMG_6239.PNG';
+import img_11 from '../assets/wrappers/IMG_6240.PNG';
+import img_12 from '../assets/wrappers/IMG_6241.PNG';
+import img_13 from '../assets/wrappers/IMG_6242.PNG';
+import img_14 from '../assets/wrappers/IMG_6243.PNG';
+import img_15 from '../assets/wrappers/IMG_6244.PNG';
+import img_16 from '../assets/wrappers/IMG_6245.PNG';
+import img_17 from '../assets/wrappers/IMG_6246.PNG';
+import img_18 from '../assets/wrappers/IMG_6247.PNG';
+import img_19 from '../assets/wrappers/IMG_6248.PNG';
+import img_20 from '../assets/Tshirts/T-shirts.jpg';
+import img_21 from '../assets/Tshirts/Tshirts.jpg';
+import img_22 from '../assets/Tshirts/cargo_15.jpg';
+import img_23 from '../assets/Tshirts/tshirt_1.jpg';
+import img_24 from '../assets/Tshirts/tshirt_10.jpg';
+import img_25 from '../assets/Tshirts/tshirt_12.jpg';
+import img_26 from '../assets/Tshirts/tshirt_16.jpg';
+import img_27 from '../assets/Tshirts/tshirt_18.jpg';
+import img_28 from '../assets/Tshirts/tshirt_2.jpg';
+import img_29 from '../assets/Tshirts/tshirt_3.jpg';
+import img_30 from '../assets/Tshirts/tshirt_5.jpg';
+import img_31 from '../assets/Tshirts/tshirt_7.jpg';
+import img_32 from '../assets/Tshirts/tshirt_9.jpg';
+import img_33 from '../assets/Pants/cargo_1.jpg';
+import img_34 from '../assets/Pants/cargo_10.jpg';
+import img_35 from '../assets/Pants/cargo_11.jpg';
+import img_36 from '../assets/Pants/cargo_14.jpg';
+import img_37 from '../assets/Pants/cargo_4.jpg';
+import img_38 from '../assets/Pants/cargo_6.jpg';
+import img_39 from '../assets/Pants/cargo_7.jpg';
+import img_40 from '../assets/Pants/cargo_8.jpg';
+import img_41 from '../assets/Pants/cargo_9.jpg';
 
 export interface Product {
   id: string;
@@ -93,7 +91,7 @@ export const products: Product[] = [
   { id: '30', name: 'Everyday Essentials Tee', price: 45, image: img_30, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 't-shirts' },
   { id: '31', name: 'Everyday Essentials Tee', price: 45, image: img_31, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 't-shirts' },
   { id: '32', name: 'Everyday Essentials Tee', price: 45, image: img_32, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 't-shirts' },
-  { id: '33', name: 'Everyday Essentials Tee', price: 45, image: img_33, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Black', 'White'], category: 't-shirts' },
+  { id: '33', name: 'Heavyweight Joggers', price: 120, image: img_33, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
   { id: '34', name: 'Heavyweight Joggers', price: 120, image: img_34, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
   { id: '35', name: 'Heavyweight Joggers', price: 120, image: img_35, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
   { id: '36', name: 'Heavyweight Joggers', price: 120, image: img_36, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
@@ -102,6 +100,4 @@ export const products: Product[] = [
   { id: '39', name: 'Heavyweight Joggers', price: 120, image: img_39, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
   { id: '40', name: 'Heavyweight Joggers', price: 120, image: img_40, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
   { id: '41', name: 'Heavyweight Joggers', price: 120, image: img_41, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
-  { id: '42', name: 'Heavyweight Joggers', price: 120, image: img_42, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
-  { id: '43', name: 'Heavyweight Joggers', price: 120, image: img_43, availableSizes: ['S', 'M', 'L', 'XL'], availableColors: ['Olive', 'Black'], category: 'joggers' },
 ];
