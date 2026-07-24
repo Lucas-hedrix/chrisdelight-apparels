@@ -11,8 +11,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onAddToCart, currency }: ProductCardProps) {
-  const [selectedSize, setSelectedSize] = useState(product.availableSizes[0]);
-  const [selectedColor, setSelectedColor] = useState(product.availableColors[0]);
+  const [selectedSize, setSelectedSize] = useState(product.availableSizes[0] || '');
+  const [selectedColor] = useState(product.availableColors[0] || '');
 
   return (
     <div className="product-card">

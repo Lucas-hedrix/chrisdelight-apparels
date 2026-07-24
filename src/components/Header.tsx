@@ -7,12 +7,11 @@ import './Header.css';
 interface HeaderProps {
   cartCount: number;
   onCartClick: () => void;
-  onContactClick: () => void;
   currency: Currency;
   onToggleCurrency: () => void;
 }
 
-export function Header({ cartCount, onCartClick, onContactClick, currency, onToggleCurrency }: HeaderProps) {
+export function Header({ cartCount, onCartClick, currency, onToggleCurrency }: HeaderProps) {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

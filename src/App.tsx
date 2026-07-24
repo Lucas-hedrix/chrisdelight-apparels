@@ -47,7 +47,6 @@ function App() {
       <Header 
         cartCount={totalCartItems} 
         onCartClick={() => setIsCartOpen(true)} 
-        onContactClick={() => setIsContactModalOpen(true)}
         currency={currency}
         onToggleCurrency={toggleCurrency}
       />

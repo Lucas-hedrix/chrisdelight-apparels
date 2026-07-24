@@ -1,23 +1,3 @@
-import img_wrapper_1 from '../assets/IMG_6229.PNG';
-import img_wrapper_2 from '../assets/IMG_6230.PNG';
-import img_wrapper_3 from '../assets/IMG_6231.PNG';
-import img_wrapper_4 from '../assets/IMG_6233.PNG';
-import img_wrapper_5 from '../assets/IMG_6234.PNG';
-import img_wrapper_6 from '../assets/IMG_6235.PNG';
-import img_wrapper_7 from '../assets/IMG_6236.PNG';
-import img_wrapper_8 from '../assets/IMG_6237.PNG';
-import img_wrapper_9 from '../assets/IMG_6238.PNG';
-import img_wrapper_10 from '../assets/IMG_6239.PNG';
-import img_wrapper_11 from '../assets/IMG_6240.PNG';
-import img_wrapper_12 from '../assets/IMG_6241.PNG';
-import img_wrapper_13 from '../assets/IMG_6242.PNG';
-import img_wrapper_14 from '../assets/IMG_6243.PNG';
-import img_wrapper_15 from '../assets/IMG_6244.PNG';
-import img_wrapper_16 from '../assets/IMG_6245.PNG';
-import img_wrapper_17 from '../assets/IMG_6246.PNG';
-import img_wrapper_18 from '../assets/IMG_6247.PNG';
-import img_wrapper_19 from '../assets/IMG_6248.PNG';
-
 export interface Product {
   id: string;
   name: string;
@@ -37,23 +17,76 @@ export interface CartItem {
 }
 
 export const products: Product[] = [
-  { id: '1', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_1, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
-  { id: '2', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_2, availableSizes: ['One Size'], availableColors: ['Yellow', 'Pink'], category: 'wrapper' },
-  { id: '3', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_3, availableSizes: ['One Size'], availableColors: ['White', 'Gray'], category: 'wrapper' },
-  { id: '4', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_4, availableSizes: ['One Size'], availableColors: ['Gray', 'Black'], category: 'wrapper' },
-  { id: '5', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_5, availableSizes: ['One Size'], availableColors: ['Gray', 'Teal'], category: 'wrapper' },
-  { id: '6', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_6, availableSizes: ['One Size'], availableColors: ['Black', 'Brown'], category: 'wrapper' },
-  { id: '7', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_7, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
-  { id: '8', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_8, availableSizes: ['One Size'], availableColors: ['Pink', 'White'], category: 'wrapper' },
-  { id: '9', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_9, availableSizes: ['One Size'], availableColors: ['Gray', 'White'], category: 'wrapper' },
-  { id: '10', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_10, availableSizes: ['One Size'], availableColors: ['Gray', 'White'], category: 'wrapper' },
-  { id: '11', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_11, availableSizes: ['One Size'], availableColors: ['Gray', 'Olive'], category: 'wrapper' },
-  { id: '12', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_12, availableSizes: ['One Size'], availableColors: ['Gray', 'Pink'], category: 'wrapper' },
-  { id: '13', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_13, availableSizes: ['One Size'], availableColors: ['Gray', 'Brown'], category: 'wrapper' },
-  { id: '14', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_14, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
-  { id: '15', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_15, availableSizes: ['One Size'], availableColors: ['Pink', 'Gray'], category: 'wrapper' },
-  { id: '16', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_16, availableSizes: ['One Size'], availableColors: ['Gray', 'Purple'], category: 'wrapper' },
-  { id: '17', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_17, availableSizes: ['One Size'], availableColors: ['Gray', 'Brown'], category: 'wrapper' },
-  { id: '18', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_18, availableSizes: ['One Size'], availableColors: ['White', 'Black'], category: 'wrapper' },
-  { id: '19', name: 'Vintage Wash Wrapper', price: 85, image: img_wrapper_19, availableSizes: ['One Size'], availableColors: ['Gray', 'Pink'], category: 'wrapper' },
+  { 
+    id: '1', 
+    name: 'Vintage Wash Wrapper', 
+    price: 85, 
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80', 
+    availableSizes: ['One Size'], 
+    availableColors: ['Pink', 'Gray'], 
+    category: 'wrapper' 
+  },
+  { 
+    id: '2', 
+    name: 'Everyday Essentials Tee', 
+    price: 45, 
+    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80', 
+    availableSizes: ['S', 'M', 'L', 'XL'], 
+    availableColors: ['Black', 'White'], 
+    category: 't-shirts' 
+  },
+  { 
+    id: '3', 
+    name: 'Heavyweight Cargo Pants', 
+    price: 120, 
+    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80', 
+    availableSizes: ['S', 'M', 'L', 'XL'], 
+    availableColors: ['Olive', 'Black'], 
+    category: 'cargo' 
+  },
+  { 
+    id: '4', 
+    name: 'Premium Hoodie', 
+    price: 95, 
+    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80', 
+    availableSizes: ['S', 'M', 'L', 'XL'], 
+    availableColors: ['Gray', 'Black'], 
+    category: 'hoodies' 
+  },
+  { 
+    id: '5', 
+    name: 'Utility Vest', 
+    price: 110, 
+    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80', 
+    availableSizes: ['M', 'L'], 
+    availableColors: ['Black', 'Beige'], 
+    category: 'outerwear' 
+  },
+  { 
+    id: '6', 
+    name: 'Relaxed Fit Jeans', 
+    price: 130, 
+    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&q=80', 
+    availableSizes: ['30', '32', '34', '36'], 
+    availableColors: ['Light Blue', 'Washed Black'], 
+    category: 'denim' 
+  },
+  { 
+    id: '7', 
+    name: 'Oversized Graphic Tee', 
+    price: 55, 
+    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&q=80', 
+    availableSizes: ['S', 'M', 'L', 'XL'], 
+    availableColors: ['White', 'Off-White'], 
+    category: 't-shirts' 
+  },
+  { 
+    id: '8', 
+    name: 'Minimalist Track Pants', 
+    price: 75, 
+    image: 'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80', 
+    availableSizes: ['S', 'M', 'L'], 
+    availableColors: ['Black', 'Navy'], 
+    category: 'pants' 
+  }
 ];
