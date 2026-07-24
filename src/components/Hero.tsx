@@ -1,6 +1,6 @@
 import './Hero.css';
 import { ArrowUpRight, MessageSquare } from 'lucide-react';
-import heroImage from '../assets/hero_bg.jpg';
+import heroImage from '../assets/Tshirts/hero_bg.jpg';
 
 interface HeroProps {
   onContactClick: () => void;
