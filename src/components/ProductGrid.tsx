@@ -17,7 +17,7 @@ export function ProductGrid({ onAddToCart, currency }: ProductGridProps) {
     { id: 'all', label: 'All' },
     { id: 'wrapper', label: 'Wrappers' },
     { id: 't-shirts', label: 'T-Shirts' },
-    { id: 'others', label: 'Others' }
+    { id: 'joggers', label: 'Joggers' }
   ];
 
   const filteredProducts = selectedCategory === 'all' 
