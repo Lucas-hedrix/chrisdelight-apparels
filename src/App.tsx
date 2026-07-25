@@ -11,6 +11,7 @@ import type { Product, CartItem } from './data/products';
 import Auth from './pages/Auth';
 import Admin from './pages/Admin';
 import AdminProductForm from './pages/AdminProductForm';
+import Collections from './pages/Collections';
 import { Toaster } from 'react-hot-toast';
 import { WhatsAppBlob } from './components/WhatsAppBlob';
 
@@ -78,6 +79,7 @@ function App() {
               <ProductGrid onAddToCart={handleAddToCart} currency={currency} />
             </>
           } />
+          <Route path="/collections" element={<Collections onAddToCart={handleAddToCart} currency={currency} />} />
           <Route path="/shipping-returns" element={<ShippingReturns />} />
         </Routes>
       </main>

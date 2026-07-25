@@ -54,7 +54,7 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
         <Link to="/" className="logo" style={{ textDecoration: 'none', color: 'inherit' }}>CHRISDELIGHT APPARELS</Link>
         <nav className="nav desktop-nav">
           <a href="/#shop" className="nav-link">Shop</a>
-          <a href="/#shop" className="nav-link">Collections</a>
+          <Link to="/collections" className="nav-link">Collections</Link>
           <a href="#" className="nav-link">About</a>
           <select 
             className="currency-select" 
@@ -107,7 +107,7 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
       {isMobileMenuOpen && (
         <div className="mobile-menu">
           <a href="/#shop" className="mobile-nav-link" onClick={closeMobileMenu}>Shop</a>
-          <a href="/#shop" className="mobile-nav-link" onClick={closeMobileMenu}>Collections</a>
+          <Link to="/collections" className="mobile-nav-link" onClick={closeMobileMenu}>Collections</Link>
           <a href="#" className="mobile-nav-link" onClick={closeMobileMenu}>About</a>
           <div className="mobile-nav-actions">
             <select 
