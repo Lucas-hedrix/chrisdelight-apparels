@@ -1,4 +1,6 @@
 import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { account } from '../lib/appwrite';
 import type { CartItem } from '../data/products';
 import type { Currency } from '../App';
 import { formatPrice } from '../utils/currency';
@@ -14,20 +16,29 @@ interface CartProps {
 
 export function Cart({ isOpen, onClose, cartItems, onRemoveItem, currency }: CartProps) {
   const totalPriceInUSD = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  const navigate = useNavigate();
 
-  const handleCheckout = () => {
-    const phoneNumber = "2348060502710";
-    
-    let message = "Hi Chrisdelight Apparels! I'd like to place an order for the following items:\n\n";
-    cartItems.forEach(item => {
-      const itemPriceStr = formatPrice(item.product.price * item.quantity, currency);
-      message += `- ${item.quantity}x ${item.product.name} (Size: ${item.size}, Color: ${item.color}) - ${itemPriceStr}\n`;
-    });
-    const totalStr = formatPrice(totalPriceInUSD, currency);
-    message += `\nTotal: ${totalStr}`;
-    
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  const handleCheckout = async () => {
+    try {
+      await account.get(); // Check if logged in
+      
+      const phoneNumber = "2348060502710";
+      
+      let message = "Hi Chrisdelight Apparels! I'd like to place an order for the following items:\n\n";
+      cartItems.forEach(item => {
+        const itemPriceStr = formatPrice(item.product.price * item.quantity, currency);
+        message += `- ${item.quantity}x ${item.product.name} (Size: ${item.size}, Color: ${item.color}) - ${itemPriceStr}\n`;
+      });
+      const totalStr = formatPrice(totalPriceInUSD, currency);
+      message += `\nTotal: ${totalStr}`;
+      
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    } catch (e) {
+      // Not logged in
+      onClose(); // Close cart
+      navigate('/login', { state: { from: '/' } }); // Redirect to login
+    }
   };
 
   return (

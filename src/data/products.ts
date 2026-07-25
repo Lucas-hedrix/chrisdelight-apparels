@@ -48,6 +48,8 @@ export interface Product {
   availableSizes: string[];
   availableColors: string[];
   category: string;
+  subCategory?: string;
+  newArrivalExpiresAt?: string;
 }
 
 export interface CartItem {

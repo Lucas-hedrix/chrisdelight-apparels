@@ -8,9 +8,15 @@ import { ShippingReturns } from './components/ShippingReturns';
 import { ContactModal } from './components/ContactModal';
 import { Routes, Route } from 'react-router-dom';
 import type { Product, CartItem } from './data/products';
+import Auth from './pages/Auth';
+import Admin from './pages/Admin';
+import AdminProductForm from './pages/AdminProductForm';
+import { Toaster } from 'react-hot-toast';
 
-export type Currency = 'USD' | 'NGN';
+export type Currency = 'USD' | 'NGN' | 'GBP' | 'CAD';
 export const EXCHANGE_RATE_NGN = 1500;
+export const EXCHANGE_RATE_GBP = 0.79;
+export const EXCHANGE_RATE_CAD = 1.35;
 
 function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -36,22 +42,24 @@ function App() {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const toggleCurrency = () => {
-    setCurrency(prev => prev === 'USD' ? 'NGN' : 'USD');
-  };
 
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <>
+      <Toaster position="top-right" />
       <Header 
         cartCount={totalCartItems} 
         onCartClick={() => setIsCartOpen(true)} 
         currency={currency}
-        onToggleCurrency={toggleCurrency}
+        onCurrencyChange={setCurrency}
       />
       <main>
         <Routes>
+          <Route path="/login" element={<Auth />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/products/new" element={<AdminProductForm />} />
+          
           <Route path="/" element={
             <>
               <Hero onContactClick={() => setIsContactModalOpen(true)} />

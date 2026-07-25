@@ -8,16 +8,20 @@ interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product, size: string, color: string) => void;
   currency: Currency;
+  isNewArrival?: boolean;
 }
 
-export function ProductCard({ product, onAddToCart, currency }: ProductCardProps) {
+export function ProductCard({ product, onAddToCart, currency, isNewArrival }: ProductCardProps) {
   const [selectedSize, setSelectedSize] = useState(product.availableSizes[0] || '');
   const [selectedColor] = useState(product.availableColors[0] || '');
 
   return (
     <div className="product-card">
       <div className="product-image-container">
-        <img src={product.image} alt={product.name} className="product-image" />
+        <img src={product.image} alt={product.name} loading="lazy" />
+        {isNewArrival && (
+          <div className="new-arrival-badge">New Arrival</div>
+        )}
       </div>
       
       <div className="product-info">
