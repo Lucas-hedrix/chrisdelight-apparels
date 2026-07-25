@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { account } from '../lib/appwrite';
 import type { CartItem } from '../data/products';
@@ -11,11 +11,12 @@ interface CartProps {
   onClose: () => void;
   cartItems: CartItem[];
   onRemoveItem: (id: string) => void;
+  onUpdateQuantity: (id: string, delta: number) => void;
   currency: Currency;
 }
 
-export function Cart({ isOpen, onClose, cartItems, onRemoveItem, currency }: CartProps) {
-  const totalPriceInUSD = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+export function Cart({ isOpen, onClose, cartItems, onRemoveItem, onUpdateQuantity, currency }: CartProps) {
+  const totalPriceInNGN = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
   const navigate = useNavigate();
 
   const handleCheckout = async () => {
@@ -29,7 +30,7 @@ export function Cart({ isOpen, onClose, cartItems, onRemoveItem, currency }: Car
         const itemPriceStr = formatPrice(item.product.price * item.quantity, currency);
         message += `- ${item.quantity}x ${item.product.name} (Size: ${item.size}, Color: ${item.color}) - ${itemPriceStr}\n`;
       });
-      const totalStr = formatPrice(totalPriceInUSD, currency);
+      const totalStr = formatPrice(totalPriceInNGN, currency);
       message += `\nTotal: ${totalStr}`;
       
       const encodedMessage = encodeURIComponent(message);
@@ -60,11 +61,18 @@ export function Cart({ isOpen, onClose, cartItems, onRemoveItem, currency }: Car
                 <img src={item.product.image} alt={item.product.name} className="cart-item-image" />
                 <div className="cart-item-details">
                   <h4 className="cart-item-title">{item.product.name}</h4>
-                  <p className="cart-item-info">
-                    Size: {item.size} | Color: {item.color}
-                    <br/>
-                    Qty: {item.quantity}
-                  </p>
+                  <div className="cart-item-info">
+                    <span>Size: {item.size} | Color: {item.color}</span>
+                    <div className="cart-quantity-controls">
+                      <button type="button" onClick={() => onUpdateQuantity(item.id, -1)} disabled={item.quantity <= 1}>
+                        <Minus size={14} />
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button type="button" onClick={() => onUpdateQuantity(item.id, 1)}>
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
                   <div className="cart-item-bottom">
                     <span className="cart-item-price">{formatPrice(item.product.price * item.quantity, currency)}</span>
                     <button className="remove-btn" onClick={() => onRemoveItem(item.id)}>
@@ -81,7 +89,7 @@ export function Cart({ isOpen, onClose, cartItems, onRemoveItem, currency }: Car
           <div className="cart-footer">
             <div className="cart-total">
               <span>Total</span>
-              <span>{formatPrice(totalPriceInUSD, currency)}</span>
+              <span>{formatPrice(totalPriceInNGN, currency)}</span>
             </div>
             <button className="checkout-btn" onClick={handleCheckout}>
               Checkout via WhatsApp

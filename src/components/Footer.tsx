@@ -17,9 +17,9 @@ export function Footer({ onContactClick }: FooterProps) {
           <div className="footer-section">
             <h4>Shop</h4>
             <ul className="footer-links">
-              <li><a href="#">New Arrivals</a></li>
-              <li><a href="#">Best Sellers</a></li>
-              <li><a href="#">Collections</a></li>
+              <li><a href="/#shop">New Arrivals</a></li>
+              <li><a href="/#shop">Best Sellers</a></li>
+              <li><a href="/#shop">Collections</a></li>
             </ul>
           </div>
           <div className="footer-section">

@@ -1,0 +1,75 @@
+.whatsapp-blob {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 999;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.whatsapp-blob:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.whatsapp-caption {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  padding: 0.6rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.whatsapp-blob:hover .whatsapp-caption {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.whatsapp-icon-container {
+  background-color: #25D366;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+  animation: pulse-whatsapp 2s infinite;
+}
+
+@keyframes pulse-whatsapp {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-blob {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+  
+  /* On mobile, we might want to just show the caption, or keep it hidden until tapped.
+     Let's keep it visible but smaller, or hide it and just show the blob. 
+     Usually, just the blob is best for mobile space. */
+  .whatsapp-caption {
+    display: none;
+  }
+}

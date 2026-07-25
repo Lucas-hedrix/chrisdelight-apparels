@@ -1,5 +1,6 @@
 .footer {
-  background-color: var(--color-gray-100);
+  background-color: var(--color-black);
+  color: var(--color-white);
   padding: 4rem 0 2rem;
   margin-top: 4rem;
 }
@@ -19,7 +20,7 @@
 
 .footer-section p {
   font-size: 0.9rem;
-  color: var(--color-gray-800);
+  color: #9ca3af;
   line-height: 1.6;
 }
 
@@ -33,20 +34,20 @@
 
 .footer-links a {
   font-size: 0.9rem;
-  color: var(--color-gray-800);
+  color: #9ca3af;
   transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
-  color: var(--color-black);
+  color: var(--color-white);
 }
 
 .footer-bottom {
   text-align: center;
   padding-top: 2rem;
-  border-top: 1px solid var(--color-gray-300);
+  border-top: 1px solid #374151;
   font-size: 0.8rem;
-  color: var(--color-gray-800);
+  color: #9ca3af;
 }
 
 @media (max-width: 768px) {

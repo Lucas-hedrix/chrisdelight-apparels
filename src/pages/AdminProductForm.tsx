@@ -31,7 +31,11 @@ const AdminProductForm = () => {
 
   useEffect(() => {
     // Quick auth check
-    account.get().catch(() => navigate('/admin/login'));
+    account.get().then(user => {
+      if (user.email !== 'admin@example.com') {
+        navigate('/');
+      }
+    }).catch(() => navigate('/login'));
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,8 +55,8 @@ const AdminProductForm = () => {
         imageFile
       );
 
-      // 2. Get file preview URL
-      const imageUrl = storage.getFilePreview(
+      // 2. Get file preview URL (getFileView is better for WebP/native formats)
+      const imageUrl = storage.getFileView(
         APPWRITE_CONFIG.bucketId,
         fileUpload.$id
       ).toString();
@@ -104,74 +108,81 @@ const AdminProductForm = () => {
         <h2>Add New Product</h2>
         
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Product Name</label>
-            <input 
-              type="text" 
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label>Product Name</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Price (₦)</label>
+              <input 
+                type="number" 
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+                min="0"
+                step="0.01"
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Price (₦)</label>
-            <input 
-              type="number" 
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-              min="0"
-              step="0.01"
-            />
-          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Category</label>
+              <select 
+                value={category} 
+                onChange={(e) => {
+                  const newCat = e.target.value;
+                  setCategory(newCat);
+                  setSubCategory(CATEGORIES_MAP[newCat][0] || '');
+                }}
+              >
+                {MAIN_CATEGORIES.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label>Category</label>
-            <select 
-              value={category} 
-              onChange={(e) => {
-                const newCat = e.target.value;
-                setCategory(newCat);
-                setSubCategory(CATEGORIES_MAP[newCat][0] || '');
-              }}
-            >
-              {MAIN_CATEGORIES.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-
-          {CATEGORIES_MAP[category].length > 0 && (
             <div className="form-group">
               <label>Sub Category</label>
-              <select value={subCategory} onChange={(e) => setSubCategory(e.target.value)}>
-                {CATEGORIES_MAP[category].map(sc => (
+              <select 
+                value={subCategory} 
+                onChange={(e) => setSubCategory(e.target.value)}
+              >
+                {CATEGORIES_MAP[category]?.map(sc => (
                   <option key={sc} value={sc}>{sc}</option>
                 ))}
               </select>
             </div>
-          )}
-
-          <div className="form-group">
-            <label>Available Sizes (comma separated)</label>
-            <input 
-              type="text" 
-              value={sizes}
-              onChange={(e) => setSizes(e.target.value)}
-              placeholder="e.g. S, M, L, XL"
-              required
-            />
           </div>
 
-          <div className="form-group">
-            <label>Available Colors (comma separated)</label>
-            <input 
-              type="text" 
-              value={colors}
-              onChange={(e) => setColors(e.target.value)}
-              placeholder="e.g. Red, Blue, Black"
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label>Available Sizes (comma separated)</label>
+              <input 
+                type="text" 
+                value={sizes}
+                onChange={(e) => setSizes(e.target.value)}
+                placeholder="e.g. S, M, L, XL"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Available Colors (comma separated)</label>
+              <input 
+                type="text" 
+                value={colors}
+                onChange={(e) => setColors(e.target.value)}
+                placeholder="e.g. Red, Blue, Black"
+              />
+            </div>
           </div>
 
           <div className="form-group">

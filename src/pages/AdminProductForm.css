@@ -1,50 +1,162 @@
 .admin-form-container {
   min-height: 100vh;
   background-color: #f8fafc;
-  padding: 2rem;
+  padding: 3rem 1.5rem;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .admin-form-card {
-  background: var(--color-white);
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
 }
 
 .admin-form-card h2 {
   font-family: var(--font-heading);
+  font-size: 1.8rem;
   margin-top: 0;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--black);
 }
 
+.admin-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Two column layout for specific groups */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-form-card .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-form-card .form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.admin-form-card input:not([type="file"]):not([type="checkbox"]),
 .admin-form-card select {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-family: var(--font-main);
-  background-color: white;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+.admin-form-card input:not([type="file"]):not([type="checkbox"]):focus,
+.admin-form-card select:focus {
+  outline: none;
+  border-color: var(--black);
+  background-color: var(--white);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .admin-form-card input[type="file"] {
-  border: 1px dashed #cbd5e1;
-  padding: 2rem 1rem;
+  width: 100%;
+  border: 2px dashed #cbd5e1;
+  padding: 2.5rem 1.5rem;
+  border-radius: 12px;
   text-align: center;
   cursor: pointer;
   background-color: #f8fafc;
+  transition: all 0.2s ease;
+  color: #64748b;
+}
+
+.admin-form-card input[type="file"]:hover {
+  border-color: #94a3b8;
+  background-color: #f1f5f9;
+}
+
+.admin-form-card .checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.admin-form-card .checkbox-group input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+}
+
+.admin-form-card .checkbox-group label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  margin-top: 1.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.form-actions button {
+  padding: 0.875rem 1.75rem;
+  border-radius: 10px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-actions button[type="button"] {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: none;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #e2e8f0;
+}
+
+.form-actions button[type="submit"] {
+  background-color: var(--black);
+  color: var(--white);
+  border: none;
+}
+
+.form-actions button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -108,7 +108,7 @@ export function ProductGrid({ onAddToCart, currency }: ProductGridProps) {
         </div>
       )}
 
-      <div className="section-header">
+      <div id="shop" className="section-header">
         <h2 className="section-title">Shop</h2>
       </div>
       
