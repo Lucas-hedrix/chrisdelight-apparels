@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Menu, X, User } from 'lucide-react';
 import type { Currency } from '../App';
-import { account } from '../lib/appwrite';
+import { account, isAdmin } from '../lib/appwrite';
+import toast from 'react-hot-toast';
+import { ConfirmModal } from './ConfirmModal';
 import './Header.css';
 
 interface HeaderProps {
@@ -17,6 +19,7 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -34,17 +37,19 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  const handleAuthAction = async () => {
-    if (user) {
-      if (user.email === 'admin@example.com') {
-        navigate('/admin');
-      } else {
-        // Logout user
-        await account.deleteSession('current');
-        setUser(null);
-      }
-    } else {
-      navigate('/login');
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await account.deleteSession('current');
+      setUser(null);
+      toast.success('Successfully signed out');
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Failed to sign out');
     }
   };
 
@@ -77,10 +82,22 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
             <option value="CAD" style={{ color: 'black' }}>CAD ($)</option>
           </select>
           
-          <button className="auth-button" onClick={handleAuthAction} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
-            <User size={20} />
-            <span>{user ? (user.email === 'admin@example.com' ? 'Admin' : 'Sign Out') : 'Sign In'}</span>
-          </button>
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {isAdmin(user.email) && (
+                <Link to="/admin" className="nav-link" style={{ fontWeight: 500 }}>Admin</Link>
+              )}
+              <button className="auth-button" onClick={handleLogoutClick} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
+                <User size={20} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          ) : (
+            <button className="auth-button" onClick={() => navigate('/login')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500 }}>
+              <User size={20} />
+              <span>Sign In</span>
+            </button>
+          )}
 
           <button className="cart-button" onClick={onCartClick}>
             <ShoppingCart size={20} />
@@ -90,7 +107,7 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
         </nav>
         
         <div className="mobile-actions">
-          <button className="auth-button" onClick={handleAuthAction} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+          <button className="auth-button" onClick={() => user ? handleLogoutClick() : navigate('/login')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <User size={20} />
           </button>
           <button className="cart-button" onClick={onCartClick}>
@@ -131,12 +148,34 @@ export function Header({ cartCount, onCartClick, currency, onCurrencyChange }: H
               <option value="GBP" style={{ color: 'black' }}>GBP (£)</option>
               <option value="CAD" style={{ color: 'black' }}>CAD ($)</option>
             </select>
-            <button className="mobile-nav-link" onClick={() => { handleAuthAction(); closeMobileMenu(); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '1rem 0' }}>
-              {user ? (user.email === 'admin@example.com' ? 'Admin Dashboard' : 'Sign Out') : 'Sign In'}
-            </button>
+            {user ? (
+              <>
+                {isAdmin(user.email) && (
+                  <Link to="/admin" className="mobile-nav-link" onClick={closeMobileMenu} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '1rem 0', textDecoration: 'none', color: 'inherit' }}>
+                    Admin Dashboard
+                  </Link>
+                )}
+                <button className="mobile-nav-link" onClick={() => { handleLogoutClick(); closeMobileMenu(); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '1rem 0' }}>
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <button className="mobile-nav-link" onClick={() => { navigate('/login'); closeMobileMenu(); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '1rem 0' }}>
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       )}
+
+      <ConfirmModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Sign Out"
+        message="Are you sure you want to sign out?"
+        confirmText="Sign Out"
+      />
     </header>
   );
 }

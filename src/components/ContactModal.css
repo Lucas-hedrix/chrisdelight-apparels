@@ -36,16 +36,16 @@
 
 .contact-modal-header h3 {
   margin: 0;
-  font-family: var(--font-heading);
+  font-family: var(--font-main);
   font-size: 1.5rem;
-  color: var(--color-gray-900);
+  color: var(--color-black);
 }
 
 .contact-modal-close {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--color-gray-500);
+  color: var(--color-gray-800);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,7 +62,7 @@
 }
 
 .contact-modal-body p {
-  color: var(--color-gray-600);
+  color: var(--color-gray-800);
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -82,14 +82,14 @@
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-gray-700);
+  color: var(--color-black);
 }
 
 .form-input, .form-textarea {
   padding: 12px;
   border: 1px solid var(--color-gray-300);
   border-radius: 6px;
-  font-family: var(--font-body);
+  font-family: var(--font-main);
   font-size: 1rem;
   transition: border-color 0.2s, outline 0.2s;
 }

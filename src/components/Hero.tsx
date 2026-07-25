@@ -1,16 +1,39 @@
+import { useState, useEffect } from 'react';
 import './Hero.css';
 import { ArrowUpRight, MessageSquare } from 'lucide-react';
-import heroImage from '../assets/Tshirts/hero_bg.jpg';
+import bg1 from '../assets/Tshirts/hero_bg.jpg';
+import bg2 from '../assets/Tshirts/Tshirts.jpg';
+import bg3 from '../assets/Tshirts/cargo_15.jpg';
+import bg4 from '../assets/Tshirts/tshirt_10.jpg';
+
+const backgroundImages = [bg1, bg2, bg3, bg4];
 
 interface HeroProps {
   onContactClick: () => void;
 }
 
 export function Hero({ onContactClick }: HeroProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % backgroundImages.length);
+    }, 5000); // 5 seconds per slide
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="hero">
-      <div className="hero-campaign" style={{ backgroundImage: `url(${heroImage})` }}>
-        
+      {backgroundImages.map((img, index) => (
+        <div
+          key={index}
+          className={`hero-slide ${index === currentSlide ? 'active' : ''}`}
+          style={{ backgroundImage: `url(${img})` }}
+        />
+      ))}
+      <div className="hero-overlay" />
+      
+      <div className="hero-campaign">
         {/* Big Watermark behind */}
         <h1 className="hero-watermark">CHRISDELIGHT</h1>
         

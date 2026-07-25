@@ -1,0 +1,104 @@
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  backdrop-filter: blur(4px);
+}
+
+.confirm-modal {
+  background-color: var(--color-white);
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  transform: translateY(20px);
+  animation: slideUp 0.4s ease forwards;
+}
+
+.confirm-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confirm-modal-header h3 {
+  margin: 0;
+  font-family: var(--font-main);
+  font-size: 1.25rem;
+  color: var(--color-black);
+}
+
+.confirm-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-gray-800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.confirm-modal-close:hover {
+  color: var(--color-gray-900);
+}
+
+.confirm-modal-body {
+  padding: 24px;
+}
+
+.confirm-modal-body p {
+  color: var(--color-gray-800);
+  margin-bottom: 24px;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-modal-actions button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirm-modal-actions .btn-cancel {
+  background-color: var(--color-gray-100);
+  color: var(--color-black);
+  border: 1px solid var(--color-gray-300);
+}
+
+.confirm-modal-actions .btn-cancel:hover {
+  background-color: var(--color-gray-200);
+}
+
+.confirm-modal-actions .btn-confirm {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border: 1px solid var(--color-black);
+}
+
+.confirm-modal-actions .btn-confirm:hover {
+  background-color: var(--color-gray-800);
+}

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { account, databases, APPWRITE_CONFIG } from '../lib/appwrite';
+import { account, databases, APPWRITE_CONFIG, isAdmin } from '../lib/appwrite';
 import { Query } from 'appwrite';
+import toast from 'react-hot-toast';
+import { ConfirmModal } from '../components/ConfirmModal';
 import './Admin.css';
 
 interface Product {
@@ -17,13 +19,14 @@ const Admin = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthAndFetchData = async () => {
       try {
         const user = await account.get();
-        if (user.email !== 'admin@example.com') {
+        if (!isAdmin(user.email)) {
           navigate('/');
           return;
         }
@@ -50,12 +53,18 @@ const Admin = () => {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const confirmLogout = async () => {
     try {
       await account.deleteSession('current');
+      toast.success('Successfully signed out');
       navigate('/login');
     } catch (error) {
       console.error('Failed to log out', error);
+      toast.error('Failed to sign out');
     }
   };
 
@@ -84,7 +93,7 @@ const Admin = () => {
         <h1>Admin Dashboard</h1>
         <div className="admin-actions">
           <Link to="/" className="btn-secondary">View Store</Link>
-          <button onClick={handleLogout} className="btn-logout">Logout</button>
+          <button onClick={handleLogoutClick} className="btn-logout">Logout</button>
         </div>
       </header>
 
@@ -150,6 +159,15 @@ const Admin = () => {
           </table>
         </div>
       </main>
+
+      <ConfirmModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Sign Out"
+        message="Are you sure you want to sign out?"
+        confirmText="Sign Out"
+      />
     </div>
   );
 };

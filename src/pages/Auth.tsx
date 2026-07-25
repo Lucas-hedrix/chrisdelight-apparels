@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { account, ID } from '../lib/appwrite';
+import { account, ID, isAdmin } from '../lib/appwrite';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
@@ -31,7 +31,7 @@ const Auth = () => {
       // For now, if they login successfully, redirect to home, or if they came from cart, to home (cart opens).
       // Let's redirect to home for now. If they are admin, they can navigate to /admin manually or we can add a link in header.
       // Wait, if they are 'admin@example.com', let's route them to /admin!
-      if (email === 'admin@example.com') {
+      if (isAdmin(email)) {
         navigate('/admin');
       } else {
         const from = location.state?.from || '/';

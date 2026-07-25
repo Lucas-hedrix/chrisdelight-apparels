@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { account, databases, storage, APPWRITE_CONFIG } from '../lib/appwrite';
+import { account, databases, storage, APPWRITE_CONFIG, isAdmin } from '../lib/appwrite';
 import { ID } from 'appwrite';
 import toast from 'react-hot-toast';
 import './AdminProductForm.css';
@@ -32,7 +32,7 @@ const AdminProductForm = () => {
   useEffect(() => {
     // Quick auth check
     account.get().then(user => {
-      if (user.email !== 'admin@example.com') {
+      if (!isAdmin(user.email)) {
         navigate('/');
       }
     }).catch(() => navigate('/login'));

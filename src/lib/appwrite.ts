@@ -16,3 +16,6 @@ export const APPWRITE_CONFIG = {
   collectionId: import.meta.env.VITE_APPWRITE_COLLECTION_ID,
   bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
 };
+
+export const ADMIN_EMAILS = ['admin@example.com', 'christiegish@yahoo.com'];
+export const isAdmin = (email?: string) => email ? ADMIN_EMAILS.includes(email.trim().toLowerCase()) : false;
