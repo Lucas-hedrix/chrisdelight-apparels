@@ -1,73 +1,134 @@
 import { useState } from 'react';
-import type { Product } from '../data/products';
-import type { Currency } from '../App';
-import { formatPrice } from '../utils/currency';
-import './ProductCard.css';
+import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { Check, ShoppingBag, Store } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
+import { useUI } from '../context/UIContext';
+import { fmt } from '../lib/format';
+import { isNewArrival, type Product } from '../lib/products';
+import PlaceholderImage from './PlaceholderImage';
+import RatingStars from './RatingStars';
 
-interface ProductCardProps {
-  product: Product;
-  onAddToCart: (product: Product, size: string, color: string) => void;
-  currency: Currency;
-  isNewArrival?: boolean;
-}
+export default function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
+  const { addItem } = useCart();
+  const { push } = useToast();
+  const { currency } = useUI();
+  const sizes = product.availableSizes ?? ['One Size'];
+  const [size, setSize] = useState(sizes[0]);
+  const [added, setAdded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = product.image && !imageFailed;
 
-export function ProductCard({ product, onAddToCart, currency, isNewArrival }: ProductCardProps) {
-  const [selectedSize, setSelectedSize] = useState(product.availableSizes[0] || '');
-  const [selectedColor] = useState(product.availableColors[0] || '');
+  const handleAdd = () => {
+    addItem(product, size);
+    push({
+      title: 'Added to cart',
+      message: `${product.name} · Size ${size}`,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
+  const discount =
+    product.salePrice != null && product.price > 0
+      ? Math.round((1 - product.salePrice / product.price) * 100)
+      : 0;
+  const badgeLabel = isNewArrival(product) ? 'New Arrival' : discount > 0 ? `-${discount}%` : null;
+  const categoryLabel = (product.subCategory ?? product.category).toUpperCase();
 
   return (
-    <div className="product-card">
-      <div className="product-image-container">
-        <img src={product.image} alt={product.name} loading="lazy" />
-        {isNewArrival && (
-          <div className="new-arrival-badge">New Arrival</div>
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.45, delay: (index % 3) * 0.08, ease: 'easeOut' }}
+      className="group rounded-3xl border border-line bg-card p-3 transition-colors hover:border-brand/40"
+    >
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-card-2">
+        {showImage ? (
+          <img
+            src={product.image ?? ''}
+            alt={product.name}
+            loading="lazy"
+            onError={() => setImageFailed(true)}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <PlaceholderImage />
         )}
-      </div>
-      
-      <div className="product-info">
-        <div>
-          <h3 className="product-name">{product.name}</h3>
-          <p className="product-price">{formatPrice(product.price, currency)}</p>
-        </div>
+        {badgeLabel && (
+          <span className="absolute left-3 top-3 rounded-full bg-brand px-2.5 py-1 text-[11px] font-extrabold text-ink">
+            {badgeLabel}
+          </span>
+        )}
+        <span className="absolute right-3 top-3 rounded-full border border-line bg-ink/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-muted backdrop-blur">
+          {categoryLabel}
+        </span>
       </div>
 
-      <div className="product-actions">
-        <div className="selectors">
-          <div className="select-group">
-            <span className="select-label">Size</span>
-            <select 
-              className="select-input" 
-              value={selectedSize} 
-              onChange={(e) => setSelectedSize(e.target.value)}
-            >
-              {product.availableSizes.map(size => (
-                <option key={size} value={size}>{size}</option>
-              ))}
-            </select>
+      <div className="px-2 pb-2 pt-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="truncate font-bold">{product.name}</h3>
+            {(product.vendorName || product.brand) && (
+              <p className="truncate text-xs text-muted">{product.vendorName ?? product.brand}</p>
+            )}
           </div>
-          {/* Color selector temporarily removed 
-          <div className="select-group">
-            <span className="select-label">Color</span>
-            <select 
-              className="select-input" 
-              value={selectedColor} 
-              onChange={(e) => setSelectedColor(e.target.value)}
-            >
-              {product.availableColors.map(color => (
-                <option key={color} value={color}>{color}</option>
-              ))}
-            </select>
-          </div>
-          */}
+          {product.rating != null && <RatingStars rating={product.rating} />}
         </div>
-        
-        <button 
-          className="add-to-cart-btn" 
-          onClick={() => onAddToCart(product, selectedSize, selectedColor)}
-        >
-          Add to Cart
-        </button>
+
+        {product.description && (
+          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">
+            {product.description}
+          </p>
+        )}
+
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {sizes.map((s) => (
+            <button
+              key={s}
+              onClick={() => setSize(s)}
+              className={`rounded-lg border px-2 py-0.5 text-[11px] font-semibold transition-colors ${
+                size === s
+                  ? 'border-brand/60 bg-brand/15 text-brand'
+                  : 'border-line text-muted hover:text-cream'
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 flex items-end justify-between gap-2">
+          <div className="leading-none">
+            {product.salePrice != null && (
+              <div className="mb-1.5 text-xs text-muted line-through">{fmt(product.price, currency)}</div>
+            )}
+            <div className="font-display text-3xl text-brand">
+              {fmt(product.salePrice ?? product.price, currency)}
+            </div>
+          </div>
+          {product.vendorSlug ? (
+            <Link
+              to={`/vendors/${product.vendorSlug}`}
+              className="flex items-center gap-1.5 rounded-full border border-brand/60 bg-brand/10 px-4 py-2.5 text-sm font-bold text-brand transition-colors hover:bg-brand/20"
+            >
+              <Store className="h-4 w-4" />
+              View Store
+            </Link>
+          ) : (
+            <motion.button
+              whileTap={{ scale: 0.94 }}
+              onClick={handleAdd}
+              className="flex items-center gap-1.5 rounded-full bg-brand px-4 py-2.5 text-sm font-bold text-ink shadow-lg shadow-white/15 transition-colors hover:bg-brand-strong"
+            >
+              {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
+              {added ? 'Added' : 'Add to Cart'}
+            </motion.button>
+          )}
+        </div>
       </div>
-    </div>
+    </motion.article>
   );
 }

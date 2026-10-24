@@ -1,24 +1,26 @@
 {
-  "name": "temp-app",
+  "name": "cybernexus-store",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "api": "node scripts/dev-api.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "appwrite": "^26.2.0",
-    "lucide-react": "^1.26.0",
+    "lucide-react": "^1.61.0",
+    "motion": "^12.23.0",
     "node-appwrite": "^27.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-hot-toast": "^2.6.0",
-    "react-paystack": "^6.0.0",
     "react-router-dom": "^7.18.1",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.3",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",

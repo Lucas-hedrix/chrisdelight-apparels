@@ -29,3 +29,6 @@ dist-ssr
 # Migration Scripts and Config
 *.mjs
 .env
+
+# E2E test account pool (throwaway credentials)
+.e2e-accounts.json

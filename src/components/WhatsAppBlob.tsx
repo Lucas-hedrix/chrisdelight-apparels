@@ -1,11 +1,11 @@
-import './WhatsAppBlob.css';
+import './whatsapp-blob.css';
 
 export function WhatsAppBlob() {
-  const phoneNumber = "2348060502710";
-  const message = encodeURIComponent("Hi Chrisdelight Apparels!");
-  
+  const phoneNumber = '2348053878388';
+  const message = encodeURIComponent('Hi Cybernexus!');
+
   return (
-    <a 
+    <a
       href={`https://wa.me/${phoneNumber}?text=${message}`}
       target="_blank"
       rel="noopener noreferrer"

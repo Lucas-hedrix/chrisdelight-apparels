@@ -1,104 +1,73 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { ProductGrid } from './components/ProductGrid';
-import { Footer } from './components/Footer';
-import { Cart } from './components/Cart';
-import { ShippingReturns } from './components/ShippingReturns';
-import { ContactModal } from './components/ContactModal';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import type { Product, CartItem } from './data/products';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import { ToastProvider } from './context/ToastContext';
+import { UIProvider } from './context/UIContext';
+import { NotificationProvider } from './context/NotificationContext';
+import Shell from './components/Shell';
+import Dashboard from './pages/Dashboard';
+import Collection from './pages/Collection';
+import Support from './pages/Support';
+import Terms from './pages/Terms';
+import ShippingReturns from './pages/ShippingReturns';
+import Sell from './pages/Sell';
+import Vendors from './pages/Vendors';
+import VendorStorefront from './pages/VendorStorefront';
+import VendorDashboard from './pages/VendorDashboard';
+import Checkout from './pages/Checkout';
 import Auth from './pages/Auth';
-import Admin from './pages/Admin';
-import AdminProductForm from './pages/AdminProductForm';
-import Collections from './pages/Collections';
-import { Toaster } from 'react-hot-toast';
+import AuthVerified from './pages/AuthVerified';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminOverview from './pages/admin/AdminOverview';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminVendors from './pages/admin/AdminVendors';
 import { WhatsAppBlob } from './components/WhatsAppBlob';
 
-export type Currency = 'USD' | 'NGN' | 'GBP' | 'CAD';
-export const EXCHANGE_RATE_NGN = 1500;
-export const EXCHANGE_RATE_GBP = 0.79;
-export const EXCHANGE_RATE_CAD = 1.35;
-
-function App() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const location = useLocation();
-  const [currency, setCurrency] = useState<Currency>('NGN');
-
-  const handleAddToCart = (product: Product, size: string, color: string) => {
-    const id = `${product.id}-${size}-${color}`;
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === id);
-      if (existing) {
-        return prev.map(item => 
-          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      return [...prev, { id, product, size, color, quantity: 1 }];
-    });
-    setIsCartOpen(true); // Auto-open cart on add
-  };
-
-  const handleRemoveFromCart = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-  };
-
-  const handleUpdateQuantity = (id: string, delta: number) => {
-    setCartItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQuantity = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    }));
-  };
-
-
-  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
+export default function App() {
   return (
-    <>
-      <Toaster position="top-right" />
-      <Header 
-        cartCount={totalCartItems} 
-        onCartClick={() => setIsCartOpen(true)} 
-        currency={currency}
-        onCurrencyChange={setCurrency}
-      />
-      <main>
-        <Routes>
-          <Route path="/login" element={<Auth />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/products/new" element={<AdminProductForm />} />
-          
-          <Route path="/" element={
-            <>
-              <Hero onContactClick={() => setIsContactModalOpen(true)} />
-              <ProductGrid onAddToCart={handleAddToCart} currency={currency} />
-            </>
-          } />
-          <Route path="/collections" element={<Collections onAddToCart={handleAddToCart} currency={currency} />} />
-          <Route path="/shipping-returns" element={<ShippingReturns />} />
-        </Routes>
-      </main>
-      <Footer onContactClick={() => setIsContactModalOpen(true)} />
-      <Cart 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cartItems={cartItems} 
-        onRemoveItem={handleRemoveFromCart}
-        onUpdateQuantity={handleUpdateQuantity}
-        currency={currency}
-      />
-      <ContactModal 
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-      />
-      {!location.pathname.startsWith('/admin') && <WhatsAppBlob />}
-    </>
+    <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <UIProvider>
+            <NotificationProvider>
+              <CartProvider>
+                <Routes>
+                  <Route element={<Shell />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="collections" element={<Collection />} />
+                    <Route path="vendors" element={<Vendors />} />
+                    <Route path="vendors/:slug" element={<VendorStorefront />} />
+                    <Route path="support" element={<Support />} />
+                    <Route path="terms" element={<Terms />} />
+                    <Route path="shipping-returns" element={<ShippingReturns />} />
+                    <Route path="sell" element={<Sell />} />
+                    <Route path="vendor" element={<VendorDashboard />} />
+                    <Route path="checkout" element={<Checkout />} />
+                  </Route>
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/auth/verified" element={<AuthVerified />} />
+                  <Route path="/login" element={<Navigate to="/auth" replace />} />
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminOverview />} />
+                    <Route path="products" element={<AdminProducts />} />
+                    <Route path="orders" element={<AdminOrders />} />
+                    <Route path="vendors" element={<AdminVendors />} />
+                  </Route>
+                </Routes>
+                <WhatsAppRoutes />
+              </CartProvider>
+            </NotificationProvider>
+          </UIProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </BrowserRouter>
   );
 }
 
-export default App;
+// WhatsApp contact stays available everywhere except the admin panel and auth page.
+function WhatsAppRoutes() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/admin') || pathname.startsWith('/auth') || pathname.startsWith('/login')) return null;
+  return <WhatsAppBlob />;
+}
