@@ -6,11 +6,9 @@ import toast from 'react-hot-toast';
 import './AdminProductForm.css';
 
 const CATEGORIES_MAP: Record<string, string[]> = {
-  'Fabric': ['Wrappers'],
-  'Casual wears': ['T-Shirts', 'Joggers', 'Jeans'],
-  'Corporate wear': ['French suits', 'Ties', 'Suits', 'Coats'],
-  'Sewn wears': [],
-  'Shoes': []
+  'Men': ['Shirts', 'Trousers'],
+  'Women': ['Dresses', 'Tops', 'Trousers'],
+  'Fabric': ['Textiles'],
 };
 
 const MAIN_CATEGORIES = Object.keys(CATEGORIES_MAP);

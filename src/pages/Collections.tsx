@@ -26,7 +26,7 @@ export default function Collections({ onAddToCart, currency }: CollectionsProps)
         );
         
         const mappedProducts: Product[] = response.documents
-          .filter(doc => doc.name !== 'Test Wrapper')
+          .filter(doc => doc.name !== 'Test Textile')
           .map((doc: any) => {
             let cat = doc.category;
             if (cat === 'Fabrics') cat = 'Fabric';

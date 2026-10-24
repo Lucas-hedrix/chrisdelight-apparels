@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
 import { X, Plus, Minus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { account } from '../lib/appwrite';
 import type { CartItem } from '../data/products';
 import type { Currency } from '../App';
 import { formatPrice } from '../utils/currency';
+import { usePaystackPayment } from 'react-paystack';
 import './Cart.css';
 
 interface CartProps {
@@ -18,23 +20,41 @@ interface CartProps {
 export function Cart({ isOpen, onClose, cartItems, onRemoveItem, onUpdateQuantity, currency }: CartProps) {
   const totalPriceInNGN = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
   const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      account.get().then(user => {
+        setUserEmail(user.email);
+      }).catch(() => {
+        // Not logged in
+      });
+    }
+  }, [isOpen]);
+
+  const config = {
+    reference: (new Date()).getTime().toString(),
+    email: userEmail || "guest@example.com",
+    amount: totalPriceInNGN * 100, // Amount is in kobo
+    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '',
+  };
+
+  const initializePayment = usePaystackPayment(config);
 
   const handleCheckout = async () => {
     try {
       await account.get(); // Check if logged in
       
-      const phoneNumber = "2348060502710";
-      
-      let message = "Hi Chrisdelight Apparels! I'd like to place an order for the following items:\n\n";
-      cartItems.forEach(item => {
-        const itemPriceStr = formatPrice(item.product.price * item.quantity, currency);
-        message += `- ${item.quantity}x ${item.product.name} (Size: ${item.size}, Color: ${item.color}) - ${itemPriceStr}\n`;
-      });
-      const totalStr = formatPrice(totalPriceInNGN, currency);
-      message += `\nTotal: ${totalStr}`;
-      
-      const encodedMessage = encodeURIComponent(message);
-      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+      initializePayment(
+        (reference: any) => {
+          alert("Payment successful! Reference: " + reference.reference);
+          cartItems.forEach(item => onRemoveItem(item.id));
+          onClose();
+        },
+        () => {
+          console.log("Payment closed.");
+        }
+      );
     } catch (e) {
       // Not logged in
       onClose(); // Close cart
@@ -92,7 +112,7 @@ export function Cart({ isOpen, onClose, cartItems, onRemoveItem, onUpdateQuantit
               <span>{formatPrice(totalPriceInNGN, currency)}</span>
             </div>
             <button className="checkout-btn" onClick={handleCheckout}>
-              Checkout via WhatsApp
+              Checkout with Paystack
             </button>
           </div>
         )}

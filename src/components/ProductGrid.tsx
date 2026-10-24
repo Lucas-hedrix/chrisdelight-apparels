@@ -19,7 +19,7 @@ export function ProductGrid({ onAddToCart, currency }: ProductGridProps) {
 
   const categories = [
     { id: 'all', label: 'All', subCategories: [] },
-    { id: 'Fabric', label: 'Fabric', subCategories: ['Wrappers'] },
+    { id: 'Fabric', label: 'Fabric', subCategories: ['Textiles'] },
     { id: 'Casual wears', label: 'Casual wears', subCategories: ['T-Shirts', 'Joggers', 'Jeans'] },
     { id: 'Corporate wear', label: 'Corporate wear', subCategories: ['French suits', 'Ties', 'Suits', 'Coats'] },
     { id: 'Sewn wears', label: 'Sewn wears', subCategories: [] },
@@ -37,7 +37,7 @@ export function ProductGrid({ onAddToCart, currency }: ProductGridProps) {
         
         const mappedProducts: Product[] = response.documents
           // Filter out the old test item if it exists
-          .filter(doc => doc.name !== 'Test Wrapper')
+          .filter(doc => doc.name !== 'Test Textile')
           .map((doc: any) => {
             // Normalize categories to match the new tabs
             let cat = doc.category;
