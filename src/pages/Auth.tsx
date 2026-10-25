@@ -78,7 +78,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="auth-bg flex min-h-screen flex-col items-center justify-center px-4 py-10 text-cream">
+    <div className="auth-glow flex min-h-screen flex-col items-center justify-center px-4 py-10 text-cream">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-between">
           <Logo />
@@ -95,7 +95,7 @@ export default function Auth() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="mt-8 rounded-3xl border border-line bg-panel/80 backdrop-blur-xl p-8 shadow-2xl shadow-black/40"
+          className="mt-8 rounded-3xl border border-white/15 bg-white/[0.06] p-8 shadow-2xl shadow-black/50 backdrop-blur-2xl backdrop-saturate-150"
         >
           <h1 className="font-display text-3xl tracking-wide">
             {mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}
@@ -114,7 +114,7 @@ export default function Auth() {
             </div>
           )}
 
-          <div className="mt-6 grid grid-cols-2 gap-1 rounded-2xl border border-line bg-card p-1">
+          <div className="mt-6 grid grid-cols-2 gap-1 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
             {(['login', 'register'] as const).map((m) => (
               <button
                 key={m}
@@ -143,7 +143,7 @@ export default function Auth() {
                   required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full rounded-xl border border-line bg-card px-4 py-3 text-sm outline-none transition-colors focus:border-brand/50"
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm outline-none transition-colors focus:border-brand/50"
                   placeholder="Your name"
                 />
               </div>
@@ -157,7 +157,7 @@ export default function Auth() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded-xl border border-line bg-card px-4 py-3 text-sm outline-none transition-colors focus:border-brand/50"
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm outline-none transition-colors focus:border-brand/50"
                 placeholder="you@example.com"
               />
             </div>
@@ -170,7 +170,7 @@ export default function Auth() {
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full rounded-xl border border-line bg-card px-4 py-3 text-sm outline-none transition-colors focus:border-brand/50"
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm outline-none transition-colors focus:border-brand/50"
                 placeholder={mode === 'register' ? 'At least 8 characters' : '••••••••'}
               />
             </div>

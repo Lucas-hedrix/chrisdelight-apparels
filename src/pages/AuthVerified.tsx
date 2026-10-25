@@ -42,7 +42,7 @@ export default function AuthVerified() {
 
   if (status === 'loading') {
     return (
-      <div className="auth-bg flex min-h-screen flex-col items-center justify-center px-4 py-10 text-cream">
+      <div className="auth-glow flex min-h-screen flex-col items-center justify-center px-4 py-10 text-cream">
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-8">
             <Logo />
@@ -65,7 +65,7 @@ export default function AuthVerified() {
   }
 
   return (
-    <div className="auth-bg flex min-h-screen flex-col items-center justify-center px-4 py-10 text-cream">
+    <div className="auth-glow flex min-h-screen flex-col items-center justify-center px-4 py-10 text-cream">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <Logo />

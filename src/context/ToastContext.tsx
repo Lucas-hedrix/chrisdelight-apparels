@@ -34,16 +34,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, x: 48 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className={`pointer-events-auto flex items-start gap-3 rounded-2xl border p-4 shadow-2xl shadow-black/50 ${
-                t.tone === 'error'
-                  ? 'border-error/40 bg-error/10'
-                  : 'border-success/40 bg-success/10'
-              }`}
+              className="pointer-events-auto flex items-start gap-3 rounded-2xl border border-line bg-card p-4 shadow-2xl shadow-black/50"
             >
               {t.tone === 'error' ? (
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-error" />
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
               ) : (
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-success" />
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cream" />
               )}
               <div className="min-w-0">
                 <p className="text-sm font-bold">{t.title}</p>
