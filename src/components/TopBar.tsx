@@ -50,7 +50,7 @@ export default function TopBar() {
   };
 
   return (
-    <header className="z-50 flex flex-wrap items-center gap-x-4 gap-y-3 px-4 pt-6 sm:px-6 lg:px-10">
+    <header className="z-30 flex flex-wrap items-center gap-x-4 gap-y-3 px-4 pt-6 sm:px-6 lg:px-10">
       <button
         onClick={() => setSidebarOpen(true)}
         className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-line bg-card text-cream lg:hidden"

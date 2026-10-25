@@ -108,7 +108,7 @@ export default function Sell() {
 function Hero() {
   return (
     <section className="relative overflow-hidden rounded-3xl border border-line bg-card p-8 sm:p-14">
-      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
+      <div className="glow-circle pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full" />
       <p className="font-display text-sm tracking-[0.3em] text-brand">FOR LOCAL VENDORS</p>
       <h1 className="mt-4 max-w-2xl font-display text-4xl leading-tight tracking-wide sm:text-6xl">
         RENT A SPACE. REACH EVERY CUSTOMER.

@@ -21,7 +21,7 @@ export default function Hero() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="hero-glow relative overflow-hidden rounded-3xl border border-line p-8 sm:p-10 lg:col-span-2"
         >
-          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
+          <div className="glow-circle pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full" />
           <p className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.25em] text-brand">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
             New Drops · Everyday Essentials
@@ -63,7 +63,7 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.12, ease: 'easeOut' }}
           className="relative flex flex-col justify-between overflow-hidden rounded-3xl border border-line bg-panel p-8"
         >
-          <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-brand/10 blur-3xl" />
+          <div className="glow-circle pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full" />
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.2em] text-brand">
               <Zap className="h-3.5 w-3.5" />

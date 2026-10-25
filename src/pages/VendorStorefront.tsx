@@ -66,7 +66,7 @@ export default function VendorStorefront() {
   return (
     <div className="mx-auto max-w-6xl">
       <header className="relative overflow-hidden rounded-3xl border border-line bg-card p-6 sm:p-10">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand/10 blur-3xl" />
+        <div className="glow-circle pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full" />
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           {vendor.logoUrl ? (
             <img
