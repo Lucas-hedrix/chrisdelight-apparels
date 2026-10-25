@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /vendor
+Disallow: /checkout
+Disallow: /auth
+
+Sitemap: https://cybernexus-store.vercel.app/sitemap.xml

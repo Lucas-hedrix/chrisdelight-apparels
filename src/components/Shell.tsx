@@ -24,6 +24,8 @@ export default function Shell() {
                   <Link to="/sell" className="font-semibold text-cream/80 transition-colors hover:text-cream">
                     Become a Vendor
                   </Link>
+                  <span aria-hidden="true">·</span>
+                  <span>Created by Gish Israel</span>
                 </span>
                 <span className="font-display tracking-[0.25em] text-cream/30">
                   WEAR THE FUTURE — CYBERNEXUS
