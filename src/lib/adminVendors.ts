@@ -1,4 +1,5 @@
 import { apiFetch } from './vendorClient';
+import { invalidate } from './cache';
 
 export interface AdminVendor {
   vendorId: string;
@@ -93,5 +94,8 @@ export const adminFeature = (vendorId: string, productId?: string, note?: string
 
 export const adminUnfeature = (id: string) => apiFetch(`/admin/promotions/${id}`, { method: 'DELETE' });
 
-export const adminDeleteVendorProduct = (id: string) =>
-  apiFetch(`/admin/vendor-products/${id}`, { method: 'DELETE' });
+export const adminDeleteVendorProduct = async (id: string) => {
+  await apiFetch(`/admin/vendor-products/${id}`, { method: 'DELETE' });
+  invalidate('vendor-products');
+  invalidate('products');
+};

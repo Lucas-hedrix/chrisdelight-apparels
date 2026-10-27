@@ -1,5 +1,6 @@
 import { ID, Query } from 'appwrite';
 import { databases, appwriteConfig, isAppwriteConfigured } from './appwrite';
+import { invalidate } from './cache';
 
 const db = appwriteConfig.databaseId;
 const prod = appwriteConfig.productsCollectionId;
@@ -19,6 +20,7 @@ export interface AdminProductData {
   availableSizes: string[];
   availableColors: string[];
   newArrivalExpiresAt?: string | null;
+  soldOut?: boolean;
 }
 
 // ── Products ─────────────────────────────────────────────────────────────────
@@ -34,17 +36,32 @@ export async function adminListProducts() {
 
 export async function adminCreateProduct(data: AdminProductData) {
   check(prod);
-  return databases.createDocument(db, prod, ID.unique(), data);
+  const res = await databases.createDocument(db, prod, ID.unique(), data);
+  invalidate('products');
+  return res;
 }
 
 export async function adminUpdateProduct(id: string, data: AdminProductData) {
   check(prod);
-  return databases.updateDocument(db, prod, id, data);
+  const res = await databases.updateDocument(db, prod, id, data);
+  invalidate('products');
+  return res;
 }
 
 export async function adminDeleteProduct(id: string) {
   check(prod);
-  return databases.deleteDocument(db, prod, id);
+  const res = await databases.deleteDocument(db, prod, id);
+  invalidate('products');
+  return res;
+}
+
+// Row quick-toggle: patches only soldOut so stale modal state can't clobber
+// other fields edited elsewhere.
+export async function adminSetProductSoldOut(id: string, soldOut: boolean) {
+  check(prod);
+  const res = await databases.updateDocument(db, prod, id, { soldOut });
+  invalidate('products');
+  return res;
 }
 
 // ── Orders ────────────────────────────────────────────────────────────────────

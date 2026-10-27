@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home, LayoutDashboard, LifeBuoy, LogOut, ShoppingBag, Shirt, Store } from 'lucide-react';
+import { Home, LayoutDashboard, LifeBuoy, LogOut, ShoppingBag, Shirt, Store, Heart } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useUI } from '../context/UIContext';
 import { useToast } from '../context/ToastContext';
 import { friendlyError } from '../lib/errors';
@@ -16,12 +17,14 @@ const NAV_ITEMS = [
   { label: 'Vendors', icon: Store, to: '/vendors' },
   { label: 'My Store', icon: Store, to: '/vendor' },
   { label: 'My Cart', icon: ShoppingBag },
+  { label: 'Wishlist', icon: Heart, to: '/wishlist' },
   { label: 'Support', icon: LifeBuoy, to: '/support' },
 ];
 
 function NavList({ onRequestLogout }: { onRequestLogout: () => void }) {
   const { user } = useAuth();
   const { count, openCart, setIsCollapsed } = useCart();
+  const { count: wishCount } = useWishlist();
   const { setSidebarOpen } = useUI();
 
   const closeMobile = () => setSidebarOpen(false);
@@ -40,13 +43,15 @@ function NavList({ onRequestLogout }: { onRequestLogout: () => void }) {
       <div className="flex flex-col gap-1.5">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
+          const badgeCount =
+            item.label === 'My Cart' ? count : item.label === 'Wishlist' ? wishCount : 0;
           const inner = (
             <>
               <Icon className="h-5 w-5 shrink-0" />
               {item.label}
-              {item.label === 'My Cart' && count > 0 && (
+              {badgeCount > 0 && (
                 <span className="ml-auto rounded-full bg-brand px-2 py-0.5 text-[11px] font-extrabold text-ink">
-                  {count}
+                  {badgeCount}
                 </span>
               )}
             </>

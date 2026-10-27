@@ -550,7 +550,7 @@ function FeaturingTab({
     setProductId('');
     if (vendor) {
       getMarketVendorProducts(vendor.slug)
-        .then(setProducts)
+        .then((r) => setProducts(r.products))
         .catch(() => setProducts([]));
     }
   }, [vendorId, vendors]);

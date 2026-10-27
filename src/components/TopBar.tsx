@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Bell, Menu, Search, UserRound } from 'lucide-react';
+import { Bell, Heart, Menu, Search, UserRound } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useNotifications, type Notification } from '../context/NotificationContext';
 import type { Currency } from '../lib/format';
 import { fmtDateShort } from '../lib/format';
@@ -13,6 +14,7 @@ const CURRENCIES: Currency[] = ['NGN', 'USD', 'GBP', 'CAD'];
 export default function TopBar() {
   const { user } = useAuth();
   const { setSidebarOpen, currency, setCurrency } = useUI();
+  const { count: wishCount } = useWishlist();
   const { notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications } =
     useNotifications();
   const navigate = useNavigate();
@@ -80,6 +82,19 @@ export default function TopBar() {
       </form>
 
       <div className="ml-auto flex shrink-0 items-center gap-3">
+        <Link
+          to="/wishlist"
+          className="relative grid h-10 w-10 place-items-center rounded-full border border-line bg-card text-muted transition-colors hover:border-brand/50 hover:text-cream"
+          aria-label={`Wishlist${wishCount > 0 ? ` (${wishCount} saved)` : ''}`}
+        >
+          <Heart className="h-5 w-5" />
+          {wishCount > 0 && (
+            <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-brand px-1 text-[10px] font-extrabold text-ink">
+              {wishCount}
+            </span>
+          )}
+        </Link>
+
         <select
           value={currency}
           onChange={(e) => setCurrency(e.target.value as Currency)}

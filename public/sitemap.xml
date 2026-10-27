@@ -6,5 +6,6 @@
   <url><loc>https://cybernexus-store.vercel.app/sell</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://cybernexus-store.vercel.app/support</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://cybernexus-store.vercel.app/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://cybernexus-store.vercel.app/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://cybernexus-store.vercel.app/shipping-returns</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

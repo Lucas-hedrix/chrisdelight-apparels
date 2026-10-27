@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { X, Loader2, ImagePlus } from 'lucide-react';
 import { storage, appwriteConfig } from '../../lib/appwrite';
 import { ID } from 'appwrite';
-import { MAIN_CATEGORIES } from '../../lib/products';
+import { getStoreCategories, type StoreCategory } from '../../lib/categories';
 import { useToast } from '../../context/ToastContext';
 
 const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
@@ -10,13 +10,14 @@ const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
 const BLANK = {
   name: '',
   price: '',
-  category: Object.keys(MAIN_CATEGORIES)[0],
+  category: '',
   subCategory: '',
   sizes: [] as string[],
   colors: '',
   image: '' as string,
   isNewArrival: false,
   newArrivalDuration: '7',
+  soldOut: false,
 };
 
 const inputCls =
@@ -45,6 +46,7 @@ export default function ProductModal({
   onSave: (data: any) => Promise<void>;
 }) {
   const [form, setForm] = useState(BLANK);
+  const [categories, setCategories] = useState<StoreCategory[]>([]);
   const [extraSizes, setExtraSizes] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -80,13 +82,14 @@ export default function ProductModal({
       setForm({
         name: product.name ?? '',
         price: product.price != null ? String(product.price) : '',
-        category: product.category ?? Object.keys(MAIN_CATEGORIES)[0],
+        category: product.category ?? '',
         subCategory: product.subCategory ?? '',
         sizes: known,
         colors: colors.join(', '),
         image: product.image ?? '',
         isNewArrival: isNew,
         newArrivalDuration: duration,
+        soldOut: Boolean(product.soldOut),
       });
       setExtraSizes(extra);
     } else {
@@ -96,6 +99,25 @@ export default function ProductModal({
     setImageFile(null);
     setError(null);
   }, [product]);
+
+  useEffect(() => {
+    let active = true;
+    getStoreCategories().then((cats) => {
+      if (!active) return;
+      setCategories(cats);
+      setForm((f) => {
+        if (f.category) return f;
+        return {
+          ...f,
+          category: cats[0]?.name ?? '',
+          subCategory: (cats[0]?.subCategories ?? [])[0] ?? '',
+        };
+      });
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const set = (k: string, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -159,6 +181,7 @@ export default function ProductModal({
           .map((c) => c.trim())
           .filter(Boolean),
         newArrivalExpiresAt,
+        soldOut: form.soldOut,
       });
       onClose();
     } catch (err: any) {
@@ -169,7 +192,19 @@ export default function ProductModal({
     }
   };
 
-  const subCategories = MAIN_CATEGORIES[form.category] ?? [];
+  const catMap = useMemo(() => new Map(categories.map((c) => [c.name, c.subCategories])), [categories]);
+  // Keep orphan/legacy categories (or a stale saved value) selectable instead of blanking the select.
+  const categoryOptions = useMemo(() => {
+    if (!form.category || catMap.has(form.category)) return categories;
+    return [{ id: form.category, name: form.category, subCategories: [] }, ...categories];
+  }, [categories, catMap, form.category]);
+  const subCategoryOptions = useMemo(() => {
+    const subs = catMap.get(form.category) ?? [];
+    if (form.subCategory && !subs.includes(form.subCategory)) {
+      return [form.subCategory, ...subs];
+    }
+    return subs;
+  }, [catMap, form.category, form.subCategory]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -233,14 +268,19 @@ export default function ProductModal({
                     setForm((f) => ({
                       ...f,
                       category: cat,
-                      subCategory: (MAIN_CATEGORIES[cat] ?? [])[0] ?? '',
+                      subCategory: (catMap.get(cat) ?? [])[0] ?? '',
                     }));
                   }}
                   style={{ background: '#0a0a0a' }}
                 >
-                  {Object.keys(MAIN_CATEGORIES).map((c) => (
-                    <option key={c} value={c} style={{ background: '#101010' }}>
-                      {c}
+                  {!form.category && (
+                    <option value="" style={{ background: '#101010' }}>
+                      Select a category
+                    </option>
+                  )}
+                  {categoryOptions.map((c) => (
+                    <option key={c.id} value={c.name} style={{ background: '#101010' }}>
+                      {c.name}
                     </option>
                   ))}
                 </select>
@@ -251,14 +291,14 @@ export default function ProductModal({
                   value={form.subCategory}
                   onChange={(e) => set('subCategory', e.target.value)}
                   style={{ background: '#0a0a0a' }}
-                  disabled={subCategories.length === 0}
+                  disabled={subCategoryOptions.length === 0}
                 >
-                  {subCategories.length === 0 ? (
+                  {subCategoryOptions.length === 0 ? (
                     <option value="" style={{ background: '#101010' }}>
                       None
                     </option>
                   ) : (
-                    subCategories.map((sc) => (
+                    subCategoryOptions.map((sc) => (
                       <option key={sc} value={sc} style={{ background: '#101010' }}>
                         {sc}
                       </option>
@@ -346,6 +386,30 @@ export default function ProductModal({
                 value={form.colors}
                 onChange={(e) => set('colors', e.target.value)}
               />
+            </Field>
+
+            {/* Sold Out */}
+            <Field label="Sold Out">
+              <div className="flex items-center gap-3 pt-1">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={form.soldOut}
+                  onClick={() => set('soldOut', !form.soldOut)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+                    form.soldOut ? 'bg-brand' : 'bg-card-2'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full shadow-md transition-transform duration-200 ${
+                      form.soldOut ? 'translate-x-6 bg-ink' : 'translate-x-1 bg-white'
+                    }`}
+                  />
+                </button>
+                <span className="text-sm text-muted">
+                  {form.soldOut ? 'Buyers see it as Sold Out' : 'Available to buy'}
+                </span>
+              </div>
             </Field>
 
             {/* New Arrival */}

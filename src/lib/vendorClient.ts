@@ -1,6 +1,7 @@
 import { ID, Permission, Query, Role, TablesDB } from 'appwrite';
 import { account, appwriteConfig, client, storage } from './appwrite';
 import { toVendorProduct, type VendorProduct } from './vendors';
+import { invalidate } from './cache';
 
 const tablesDB = new TablesDB(client);
 
@@ -89,6 +90,7 @@ export interface VendorProductInput {
   subCategory?: string;
   availableSizes: string[];
   availableColors?: string[];
+  soldOut?: boolean;
 }
 
 // Rows are created client-side against vendor_products (rowSecurity). The row
@@ -112,6 +114,7 @@ export async function createVendorProduct(vendorId: string, input: VendorProduct
       subCategory: input.subCategory ?? null,
       availableSizes: input.availableSizes,
       availableColors: input.availableColors ?? [],
+      soldOut: input.soldOut ?? false,
     },
     permissions: [
       Permission.read(Role.any()),
@@ -119,6 +122,8 @@ export async function createVendorProduct(vendorId: string, input: VendorProduct
       Permission.delete(Role.user(me.$id)),
     ],
   });
+  invalidate('vendor-products');
+  invalidate('products');
   return toVendorProduct(row);
 }
 
@@ -136,8 +141,23 @@ export async function updateVendorProduct(rowId: string, input: VendorProductInp
       subCategory: input.subCategory ?? null,
       availableSizes: input.availableSizes,
       availableColors: input.availableColors ?? [],
+      soldOut: input.soldOut ?? false,
     },
   });
+  invalidate('vendor-products');
+  invalidate('products');
+  return toVendorProduct(row);
+}
+
+export async function setVendorProductSoldOut(rowId: string, soldOut: boolean) {
+  const row = await tablesDB.updateRow({
+    databaseId: appwriteConfig.databaseId,
+    tableId: 'vendor_products',
+    rowId,
+    data: { soldOut },
+  });
+  invalidate('vendor-products');
+  invalidate('products');
   return toVendorProduct(row);
 }
 
@@ -147,6 +167,8 @@ export async function deleteVendorProduct(rowId: string) {
     tableId: 'vendor_products',
     rowId,
   });
+  invalidate('vendor-products');
+  invalidate('products');
 }
 
 export async function listMyProducts(vendorId: string): Promise<VendorProduct[]> {

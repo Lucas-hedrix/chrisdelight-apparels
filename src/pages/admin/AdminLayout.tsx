@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, NavLink, Navigate, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingBag, Store, Menu, X, ShieldX } from 'lucide-react';
+import { LayoutDashboard, Package, Tags, ShoppingBag, Store, Menu, X, ShieldX } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { isAdmin } from '../../lib/appwrite';
 
 const NAV = [
   { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/admin/products', label: 'Products', icon: Package },
+  { to: '/admin/categories', label: 'Categories', icon: Tags },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/vendors', label: 'Vendors', icon: Store },
 ];

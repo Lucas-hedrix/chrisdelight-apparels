@@ -1,18 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getProducts, MAIN_CATEGORIES, type Product } from '../lib/products';
+import { getProducts, type Product } from '../lib/products';
+import { getStoreCategories, type StoreCategory } from '../lib/categories';
 import ProductCard from './ProductCard';
 import SkeletonCard from './SkeletonCard';
 import CategoryChips from './CategoryChips';
 
-const CATEGORY_OPTIONS = [
-  { id: 'all', label: 'All' },
-  ...Object.keys(MAIN_CATEGORIES).map((c) => ({ id: c, label: c })),
-];
+const ALL_OPTIONS = [{ id: 'all', label: 'All' }];
 
 export default function PopularCollection() {
   const [products, setProducts] = useState<Product[] | null>(null);
+  const [categories, setCategories] = useState<StoreCategory[] | null>(null);
   const [category, setCategory] = useState('all');
   const [subCategory, setSubCategory] = useState('all');
 
@@ -21,12 +20,19 @@ export default function PopularCollection() {
     getProducts().then((p) => {
       if (active) setProducts(p);
     });
+    getStoreCategories().then((c) => {
+      if (active) setCategories(c);
+    });
     return () => {
       active = false;
     };
   }, []);
 
-  const subs = category === 'all' ? [] : MAIN_CATEGORIES[category] ?? [];
+  const categoryOptions = useMemo(
+    () => [...ALL_OPTIONS, ...(categories ?? []).map((c) => ({ id: c.name, label: c.name }))],
+    [categories]
+  );
+  const subs = category === 'all' ? [] : categories?.find((c) => c.name === category)?.subCategories ?? [];
 
   const filtered = useMemo(() => {
     if (!products) return [];
@@ -45,7 +51,7 @@ export default function PopularCollection() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="font-display text-3xl tracking-wide">POPULAR COLLECTION</h2>
         <div className="flex flex-wrap items-center gap-4">
-          <CategoryChips value={category} onChange={handleCategory} options={CATEGORY_OPTIONS} />
+          <CategoryChips value={category} onChange={handleCategory} options={categoryOptions} />
           <Link
             to="/collections"
             className="group flex items-center gap-1.5 text-sm font-semibold text-muted transition-colors hover:text-cream"

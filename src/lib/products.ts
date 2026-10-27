@@ -1,6 +1,7 @@
 import { Query } from 'appwrite';
 import { databases, appwriteConfig, isAppwriteConfigured } from './appwrite';
-import { getMarketVendorProducts } from './vendors';
+import { getMarketVendorProducts, type MarketVendorProduct } from './vendors';
+import { cached, TTL } from './cache';
 
 export interface Product {
   id: string;
@@ -15,6 +16,7 @@ export interface Product {
   brand?: string;
   rating?: number | null;
   featured?: boolean;
+  soldOut?: boolean;
   newArrivalExpiresAt?: string | null;
   description?: string;
   // Set when the product belongs to a vendor storefront rather than the house.
@@ -56,6 +58,7 @@ function normalize(doc: any): Product {
     brand: doc.brand || undefined,
     rating: doc.rating == null || doc.rating === '' ? null : Number(doc.rating),
     featured: Boolean(doc.featured),
+    soldOut: Boolean(doc.soldOut),
     newArrivalExpiresAt: doc.newArrivalExpiresAt ?? null,
     description: doc.description || undefined,
   };
@@ -79,7 +82,7 @@ async function getHouseProducts(): Promise<Product[]> {
   }
 }
 
-function vendorToProduct(p: Awaited<ReturnType<typeof getMarketVendorProducts>>[number]): Product {
+function vendorToProduct(p: MarketVendorProduct): Product {
   return {
     id: p.id,
     name: p.name,
@@ -90,6 +93,7 @@ function vendorToProduct(p: Awaited<ReturnType<typeof getMarketVendorProducts>>[
     image: p.image,
     availableSizes: p.availableSizes.length ? p.availableSizes : ['One Size'],
     availableColors: p.availableColors,
+    soldOut: p.soldOut ?? false,
     description: p.description,
     vendorId: p.vendor.id,
     vendorSlug: p.vendor.slug,
@@ -100,15 +104,18 @@ function vendorToProduct(p: Awaited<ReturnType<typeof getMarketVendorProducts>>[
 export async function getProducts({
   search = '',
 } : { search?: string } = {}): Promise<Product[]> {
-  const [house, vendorItems] = await Promise.all([
-    getHouseProducts(),
-    getMarketVendorProducts().catch(() => []),
-  ]);
-  let items = [...house, ...vendorItems.map(vendorToProduct)];
+  // Base list is cached; search filtering stays outside so every query reuses it.
+  const items = await cached('products:all', TTL.products, async () => {
+    const [house, market] = await Promise.all([
+      getHouseProducts(),
+      getMarketVendorProducts().catch(() => ({ products: [], categories: [] })),
+    ]);
+    return [...house, ...market.products.map(vendorToProduct)];
+  });
 
   if (search) {
     const q = search.toLowerCase();
-    items = items.filter((p) =>
+    return items.filter((p) =>
       `${p.name} ${p.brand ?? ''} ${p.vendorName ?? ''}`.toLowerCase().includes(q)
     );
   }
@@ -126,4 +133,9 @@ export const MAIN_CATEGORIES: Record<string, string[]> = {
   'Corporate wear': ['French suits', 'Ties', 'Suits', 'Coats'],
   'Sewn wears': [],
   Shoes: [],
+  Electronics: ['TVs & Screens', 'Audio & Sound', 'Chargers & Power'],
+  Gadgets: ['Phones', 'Tablets', 'Lights'],
+  Accessories: ['Wristwatches', 'Chains'],
+  Decorations: ['Frames', 'LED Lights', 'Posters'],
+  'Skin care products': ['Soaps', 'Creams', 'Lotions'],
 };

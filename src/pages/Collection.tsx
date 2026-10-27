@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Search, SearchX } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { getProducts, MAIN_CATEGORIES, type Product } from '../lib/products';
+import { getProducts, type Product } from '../lib/products';
+import { getStoreCategories, type StoreCategory } from '../lib/categories';
 import ProductCard from '../components/ProductCard';
 import SkeletonCard from '../components/SkeletonCard';
 import CategoryChips from '../components/CategoryChips';
 
-const CATEGORY_OPTIONS = [
-  { id: 'all', label: 'All' },
-  ...Object.keys(MAIN_CATEGORIES).map((c) => ({ id: c, label: c })),
-];
+const ALL_OPTIONS = [{ id: 'all', label: 'All' }];
 
 export default function Collection() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,10 +16,21 @@ export default function Collection() {
   const [category, setCategory] = useState('all');
   const [subCategory, setSubCategory] = useState('all');
   const [products, setProducts] = useState<Product[] | null>(null);
+  const [categories, setCategories] = useState<StoreCategory[] | null>(null);
 
   useEffect(() => {
     setQ(paramQ);
   }, [paramQ]);
+
+  useEffect(() => {
+    let active = true;
+    getStoreCategories().then((c) => {
+      if (active) setCategories(c);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -42,7 +51,11 @@ export default function Collection() {
     };
   }, [paramQ]);
 
-  const subs = category === 'all' ? [] : MAIN_CATEGORIES[category] ?? [];
+  const categoryOptions = useMemo(
+    () => [...ALL_OPTIONS, ...(categories ?? []).map((c) => ({ id: c.name, label: c.name }))],
+    [categories]
+  );
+  const subs = category === 'all' ? [] : categories?.find((c) => c.name === category)?.subCategories ?? [];
 
   const filtered = useMemo(() => {
     if (!products) return [];
@@ -79,7 +92,7 @@ export default function Collection() {
       </div>
 
       <div className="mt-6">
-        <CategoryChips value={category} onChange={handleCategory} options={CATEGORY_OPTIONS} />
+        <CategoryChips value={category} onChange={handleCategory} options={categoryOptions} />
       </div>
 
       {subs.length > 0 && (

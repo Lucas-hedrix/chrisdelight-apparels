@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Check, ShoppingBag, Store } from 'lucide-react';
+import { Check, Heart, ShoppingBag, Store } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useUI } from '../context/UIContext';
+import { useWishlist } from '../context/WishlistContext';
 import { fmt } from '../lib/format';
 import { isNewArrival, type Product } from '../lib/products';
 import PlaceholderImage from './PlaceholderImage';
@@ -14,6 +15,8 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
   const { addItem } = useCart();
   const { push } = useToast();
   const { currency } = useUI();
+  const { has: inWishlist, toggle: toggleWishlist } = useWishlist();
+  const saved = inWishlist(product.id);
   const sizes = product.availableSizes ?? ['One Size'];
   const [size, setSize] = useState(sizes[0]);
   const [added, setAdded] = useState(false);
@@ -30,11 +33,25 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
     setTimeout(() => setAdded(false), 1200);
   };
 
+  const handleWishlist = () => {
+    const nowSaved = toggleWishlist(product);
+    push({
+      title: nowSaved ? 'Saved to wishlist' : 'Removed from wishlist',
+      message: product.name,
+    });
+  };
+
   const discount =
     product.salePrice != null && product.price > 0
       ? Math.round((1 - product.salePrice / product.price) * 100)
       : 0;
-  const badgeLabel = isNewArrival(product) ? 'New Arrival' : discount > 0 ? `-${discount}%` : null;
+  const badgeLabel = product.soldOut
+    ? 'Sold Out'
+    : isNewArrival(product)
+      ? 'New Arrival'
+      : discount > 0
+        ? `-${discount}%`
+        : null;
   const categoryLabel = (product.subCategory ?? product.category).toUpperCase();
 
   return (
@@ -52,7 +69,9 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
             alt={product.name}
             loading="lazy"
             onError={() => setImageFailed(true)}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+              product.soldOut ? 'opacity-60' : ''
+            }`}
           />
         ) : (
           <PlaceholderImage />
@@ -74,8 +93,22 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
             {(product.vendorName || product.brand) && (
               <p className="truncate text-xs text-muted">{product.vendorName ?? product.brand}</p>
             )}
+            <div className="mt-1">
+              <RatingStars rating={product.rating} />
+            </div>
           </div>
-          {product.rating != null && <RatingStars rating={product.rating} />}
+          <button
+            onClick={handleWishlist}
+            aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
+            aria-pressed={saved}
+            className={`-mr-1 grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-colors ${
+              saved
+                ? 'border-brand/60 bg-brand/15 text-brand'
+                : 'border-line text-muted hover:text-cream'
+            }`}
+          >
+            <Heart className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} />
+          </button>
         </div>
 
         {product.description && (
@@ -117,6 +150,11 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
               <Store className="h-4 w-4" />
               View Store
             </Link>
+          ) : product.soldOut ? (
+            <span className="flex cursor-not-allowed items-center gap-1.5 rounded-full bg-card-2 px-4 py-2.5 text-sm font-bold text-muted">
+              <ShoppingBag className="h-4 w-4" />
+              Sold Out
+            </span>
           ) : (
             <motion.button
               whileTap={{ scale: 0.94 }}

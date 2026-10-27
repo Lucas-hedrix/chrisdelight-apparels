@@ -1,3 +1,5 @@
+import { cached, TTL } from './cache';
+
 export interface Vendor {
   id: string;
   slug: string;
@@ -19,10 +21,20 @@ export interface VendorProduct {
   subCategory?: string;
   availableSizes: string[];
   availableColors: string[];
+  soldOut?: boolean;
 }
 
 export interface MarketVendorProduct extends VendorProduct {
   vendor: { id: string; slug: string; businessName: string; featured: boolean };
+}
+
+export interface VendorStoreCategory {
+  id: string;
+  name: string;
+  subCategories: string[];
+  description?: string;
+  vendorId?: string;
+  order?: number;
 }
 
 export interface VendorContact {
@@ -81,6 +93,7 @@ export function toVendorProduct(row: any): VendorProduct {
     subCategory: row.subCategory || undefined,
     availableSizes: toStringArray(row.availableSizes),
     availableColors: toStringArray(row.availableColors),
+    soldOut: Boolean(row.soldOut),
   };
 }
 
@@ -116,11 +129,25 @@ export async function getVendorContact(idOrSlug: string): Promise<VendorContact 
 
 export async function getMarketVendorProducts(
   vendor?: string
-): Promise<MarketVendorProduct[]> {
-  const qs = vendor ? `?vendor=${encodeURIComponent(vendor)}` : '';
-  const data = await getJSON<{ products: any[] }>(`/api/vendor-products${qs}`);
-  return (data?.products ?? []).map((p) => ({
-    ...toVendorProduct(p),
-    vendor: p.vendor,
-  }));
+): Promise<{ products: MarketVendorProduct[]; categories: VendorStoreCategory[] }> {
+  const key = `vendor-products:${vendor ?? 'all'}`;
+  return cached(key, TTL.products, async () => {
+    const qs = vendor ? `?vendor=${encodeURIComponent(vendor)}` : '';
+    const data = await getJSON<{ products: any[]; categories?: any[] }>(
+      `/api/vendor-products${qs}`
+    );
+    const products = (data?.products ?? []).map((p) => ({
+      ...toVendorProduct(p),
+      vendor: p.vendor,
+    }));
+    const categories = (data?.categories ?? []).map((c) => ({
+      id: String(c.id ?? c.name),
+      name: String(c.name ?? ''),
+      subCategories: Array.isArray(c.subCategories) ? c.subCategories.map(String) : [],
+      description: c.description || undefined,
+      vendorId: c.vendorId || undefined,
+      order: c.order == null ? undefined : Number(c.order),
+    }));
+    return { products, categories };
+  });
 }

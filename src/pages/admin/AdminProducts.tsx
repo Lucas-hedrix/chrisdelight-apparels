@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Search, RefreshCw, AlertTriangle, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, RefreshCw, AlertTriangle, Star, PackageX, PackageCheck } from 'lucide-react';
 import {
   adminListProducts,
   adminCreateProduct,
   adminUpdateProduct,
   adminDeleteProduct,
+  adminSetProductSoldOut,
 } from '../../lib/admin';
 import { isAppwriteConfigured } from '../../lib/appwrite';
 import { fmt } from '../../lib/format';
@@ -112,6 +113,23 @@ export default function AdminProducts() {
     }
   };
 
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  const toggleSoldOut = async (p: any) => {
+    setTogglingId(p.$id);
+    try {
+      const next = !p.soldOut;
+      await adminSetProductSoldOut(p.$id, next);
+      setProducts((prev) =>
+        prev ? prev.map((x) => (x.$id === p.$id ? { ...x, soldOut: next } : x)) : prev
+      );
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   if (!isAppwriteConfigured) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-line bg-card p-14 text-center">
@@ -173,9 +191,9 @@ export default function AdminProducts() {
         {/* Column headers */}
         <div
           className="hidden border-b border-line bg-card-2 px-5 py-3 sm:grid"
-          style={{ gridTemplateColumns: '1fr 110px 110px 90px 80px' }}
+          style={{ gridTemplateColumns: '1fr 110px 110px 90px 90px 110px' }}
         >
-          {['Product', 'Category', 'Price', 'New', 'Actions'].map((h) => (
+          {['Product', 'Category', 'Price', 'New', 'Stock', 'Actions'].map((h) => (
             <span key={h} className="text-[11px] font-bold uppercase tracking-wider text-muted">
               {h}
             </span>
@@ -213,7 +231,7 @@ export default function AdminProducts() {
                 <div
                   key={p.$id}
                   className="hidden items-center gap-2 px-5 py-3.5 transition-colors hover:bg-card-2/50 sm:grid"
-                  style={{ gridTemplateColumns: '1fr 110px 110px 90px 80px' }}
+                  style={{ gridTemplateColumns: '1fr 110px 110px 90px 90px 110px' }}
                 >
                   {/* Name + image */}
                   <div className="flex min-w-0 items-center gap-3">
@@ -248,6 +266,21 @@ export default function AdminProducts() {
                           : 'text-muted/25'
                       }`}
                     />
+                  </div>
+                  {/* Stock quick toggle */}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => toggleSoldOut(p)}
+                      disabled={togglingId === p.$id}
+                      title={p.soldOut ? 'Mark back in stock' : 'Mark as sold out'}
+                      className={`rounded-lg border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide transition-colors disabled:opacity-50 ${
+                        p.soldOut
+                          ? 'border-brand/50 bg-brand/15 text-brand'
+                          : 'border-line text-muted hover:border-brand/40 hover:text-cream'
+                      }`}
+                    >
+                      {p.soldOut ? 'Sold out' : 'In stock'}
+                    </button>
                   </div>
                   {/* Actions */}
                   <div className="flex items-center gap-2">
@@ -294,6 +327,18 @@ export default function AdminProducts() {
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    onClick={() => toggleSoldOut(p)}
+                    disabled={togglingId === p.$id}
+                    title={p.soldOut ? 'Mark back in stock' : 'Mark as sold out'}
+                    className="grid h-8 w-8 place-items-center rounded-lg border border-line text-muted hover:text-cream disabled:opacity-50"
+                  >
+                    {p.soldOut ? (
+                      <PackageCheck className="h-3.5 w-3.5" />
+                    ) : (
+                      <PackageX className="h-3.5 w-3.5" />
+                    )}
+                  </button>
                   <button
                     onClick={() => setModalProduct(p)}
                     className="grid h-8 w-8 place-items-center rounded-lg border border-line text-muted hover:text-cream"

@@ -7,16 +7,28 @@ import {
   ExternalLink,
   Loader2,
   Lock,
+  PackageCheck,
+  PackageX,
   Pencil,
   Plus,
   RefreshCw,
   Store,
   Trash2,
   UserRound,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { apiFetch, createVendorProduct, deleteVendorProduct, getMyVendor, listMyProducts, updateVendorProduct, uploadLogo, type VendorMe, type VendorProductInput } from '../lib/vendorClient';
+import { account } from '../lib/appwrite';
+import {
+  createCategory,
+  deleteCategory,
+  getStoreCategories,
+  getVendorCategories,
+  updateCategory,
+  type StoreCategory,
+} from '../lib/categories';
+import { apiFetch, createVendorProduct, deleteVendorProduct, getMyVendor, listMyProducts, setVendorProductSoldOut, updateVendorProduct, uploadLogo, type VendorMe, type VendorProductInput } from '../lib/vendorClient';
 import { PLAN_PRICES, type VendorProduct } from '../lib/vendors';
 import { isPaystackConfigured, loadPaystack, paystackPublicKey } from '../lib/payments';
 import { fmt } from '../lib/format';
@@ -27,7 +39,7 @@ const inputCls =
   'w-full rounded-xl border border-line bg-ink px-4 py-2.5 text-sm text-cream ' +
   'placeholder:text-muted outline-none transition-colors focus:border-brand/50';
 
-type Tab = 'products' | 'profile' | 'billing';
+type Tab = 'products' | 'categories' | 'profile' | 'billing';
 
 const STATUS_STYLES: Record<string, string> = {
   active: 'border-brand/50 bg-brand/15 text-brand',
@@ -330,6 +342,7 @@ function DashboardBody({
         {(
           [
             ['products', 'Products'],
+            ['categories', 'Categories'],
             ['profile', 'Profile'],
             ['billing', 'Payments & Commissions'],
           ] as [Tab, string][]
@@ -348,6 +361,7 @@ function DashboardBody({
 
       <div className="mt-6">
         {tab === 'products' && <ProductsTab me={me} />}
+        {tab === 'categories' && <CategoriesTab me={me} />}
         {tab === 'profile' && <ProfileTab me={me} refresh={refresh} />}
         {tab === 'billing' && <BillingTab me={me} />}
       </div>
@@ -381,6 +395,31 @@ function ProductsTab({ me }: { me: VendorMe }) {
       push({ title: 'Product added', message: created.name });
     }
     await load();
+  }
+
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  async function toggleSoldOut(p: VendorProduct) {
+    setTogglingId(p.id);
+    try {
+      await setVendorProductSoldOut(p.id, !p.soldOut);
+      setProducts((prev) =>
+        prev ? prev.map((x) => (x.id === p.id ? { ...x, soldOut: !p.soldOut } : x)) : prev
+      );
+      push({
+        title: p.soldOut ? 'Back in stock' : 'Marked as sold out',
+        message: p.name,
+      });
+    } catch (err) {
+      logError(err);
+      push({
+        title: "Couldn't update product",
+        message: friendlyError(err),
+        tone: 'error',
+      });
+    } finally {
+      setTogglingId(null);
+    }
   }
 
   async function handleDelete() {
@@ -458,6 +497,22 @@ function ProductsTab({ me }: { me: VendorMe }) {
                 <span className="shrink-0 text-sm font-bold">{fmt(p.price)}</span>
                 <div className="flex shrink-0 items-center gap-1.5">
                   <button
+                    onClick={() => toggleSoldOut(p)}
+                    disabled={togglingId === p.id}
+                    title={p.soldOut ? 'Mark back in stock' : 'Mark as sold out'}
+                    className={`grid h-8 w-8 place-items-center rounded-lg border transition-colors disabled:opacity-50 ${
+                      p.soldOut
+                        ? 'border-brand/50 bg-brand/15 text-brand'
+                        : 'border-line text-muted hover:border-brand/40 hover:text-cream'
+                    }`}
+                  >
+                    {p.soldOut ? (
+                      <PackageCheck className="h-3.5 w-3.5" />
+                    ) : (
+                      <PackageX className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                  <button
                     onClick={() => setModalProduct(p)}
                     title="Edit"
                     className="grid h-8 w-8 place-items-center rounded-lg border border-line text-muted transition-colors hover:border-brand/40 hover:text-cream"
@@ -479,7 +534,12 @@ function ProductsTab({ me }: { me: VendorMe }) {
       )}
 
       {modalProduct !== undefined && (
-        <VendorProductModal product={modalProduct} onClose={() => setModalProduct(undefined)} onSave={handleSave} />
+        <VendorProductModal
+          product={modalProduct}
+          vendorId={me.vendor.vendorId}
+          onClose={() => setModalProduct(undefined)}
+          onSave={handleSave}
+        />
       )}
 
       {deleteTarget && (
@@ -490,6 +550,274 @@ function ProductsTab({ me }: { me: VendorMe }) {
           onCancel={() => setDeleteTarget(null)}
         />
       )}
+    </div>
+  );
+}
+
+// ── Categories ───────────────────────────────────────────────────────────────
+function CategoriesTab({ me }: { me: VendorMe }) {
+  const { push } = useToast();
+  const [storeCats, setStoreCats] = useState<StoreCategory[] | null>(null);
+  const [myCats, setMyCats] = useState<StoreCategory[] | null>(null);
+  const [name, setName] = useState('');
+  const [subs, setSubs] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<StoreCategory | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      const [store, mine] = await Promise.all([
+        getStoreCategories(),
+        getVendorCategories(me.vendor.vendorId),
+      ]);
+      setStoreCats(store);
+      setMyCats(mine);
+    } catch (err) {
+      logError(err);
+      push({ title: "Couldn't load categories", message: friendlyError(err), tone: 'error' });
+      setStoreCats([]);
+      setMyCats([]);
+    }
+  }, [me.vendor.vendorId, push]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = name.trim().slice(0, 100);
+    if (!trimmed) return;
+    if (storeCats?.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())) {
+      push({
+        title: 'Category already exists',
+        message: `"${trimmed}" is already a store category — you can use it right away.`,
+        tone: 'error',
+      });
+      return;
+    }
+    setCreating(true);
+    try {
+      const acct = await account.get();
+      await createCategory({
+        name: trimmed,
+        subCategories: subs
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .slice(0, 50),
+        vendorId: me.vendor.vendorId,
+        ownerUserId: acct.$id,
+      });
+      setName('');
+      setSubs('');
+      push({ title: 'Category added', message: `"${trimmed}" is now on your storefront.` });
+      await load();
+    } catch (err) {
+      logError(err);
+      push({ title: "Couldn't add category", message: friendlyError(err), tone: 'error' });
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleRemoveSub = async (cat: StoreCategory, sub: string) => {
+    try {
+      await updateCategory(cat.id, { subCategories: cat.subCategories.filter((s) => s !== sub) });
+      await load();
+    } catch (err) {
+      push({ title: "Couldn't update category", message: friendlyError(err), tone: 'error' });
+    }
+  };
+
+  const handleAddSub = async (cat: StoreCategory, sub: string) => {
+    try {
+      await updateCategory(cat.id, { subCategories: [...cat.subCategories, sub] });
+      await load();
+    } catch (err) {
+      push({ title: "Couldn't update category", message: friendlyError(err), tone: 'error' });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await deleteCategory(deleteTarget.id);
+      setDeleteTarget(null);
+      await load();
+    } catch (err) {
+      push({ title: "Couldn't remove category", message: friendlyError(err), tone: 'error' });
+      setDeleteTarget(null);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="rounded-3xl border border-line bg-card p-6">
+        <h3 className="font-bold">Store categories</h3>
+        <p className="mt-1 text-sm leading-relaxed text-muted">
+          These apply to every store. Use them for your products as-is — or add your own categories
+          below.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {storeCats === null
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-8 w-24 animate-pulse rounded-lg bg-card-2" />
+              ))
+            : storeCats.map((c) => (
+                <span
+                  key={c.id}
+                  className="rounded-lg border border-line bg-card-2 px-3 py-1.5 text-xs font-semibold text-cream"
+                >
+                  {c.name}
+                </span>
+              ))}
+        </div>
+      </div>
+
+      <form onSubmit={handleCreate} className="mt-4 rounded-3xl border border-line bg-card p-6">
+        <h3 className="font-bold">Add your own category</h3>
+        <p className="mt-1 text-sm leading-relaxed text-muted">
+          Custom categories and collections appear on your storefront only.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-widest text-muted">
+              Category name<span className="ml-1 text-brand">*</span>
+            </label>
+            <input
+              className={inputCls}
+              maxLength={100}
+              placeholder="e.g. Phone Accessories"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-widest text-muted">
+              Collections (comma-separated)
+            </label>
+            <input
+              className={inputCls}
+              placeholder="e.g. Chargers, Cases, Screen guards"
+              value={subs}
+              onChange={(e) => setSubs(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            type="submit"
+            disabled={creating || !name.trim()}
+            className="flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-ink shadow-lg shadow-white/15 transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            <Plus className="h-4 w-4" />
+            {creating ? 'Adding…' : 'Add Category'}
+          </button>
+        </div>
+      </form>
+
+      <div className="mt-4 space-y-4">
+        <h3 className="text-sm font-bold">
+          Your categories {myCats !== null && myCats.length > 0 && `(${myCats.length})`}
+        </h3>
+        {myCats === null ? (
+          <div className="h-24 animate-pulse rounded-2xl border border-line bg-card" />
+        ) : myCats.length === 0 ? (
+          <p className="rounded-2xl border border-line bg-card p-6 text-sm text-muted">
+            You haven't added any custom categories yet.
+          </p>
+        ) : (
+          myCats.map((c) => (
+            <div key={c.id} className="rounded-2xl border border-line bg-card p-5">
+              <div className="flex items-start justify-between gap-3">
+                <h4 className="font-bold">{c.name}</h4>
+                <button
+                  onClick={() => setDeleteTarget(c)}
+                  title="Delete category"
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-line text-muted transition-colors hover:border-brand/40 hover:text-brand"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {c.subCategories.map((s) => (
+                  <span
+                    key={s}
+                    className="flex items-center gap-1.5 rounded-lg border border-line bg-card-2 px-2.5 py-1 text-xs font-semibold text-cream"
+                  >
+                    {s}
+                    <button
+                      onClick={() => handleRemoveSub(c, s)}
+                      aria-label={`Remove ${s}`}
+                      className="text-muted transition-colors hover:text-brand"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+                {c.subCategories.length === 0 && (
+                  <span className="text-xs text-muted">No collections yet</span>
+                )}
+              </div>
+              <AddSubInline onAdd={(sub) => handleAddSub(c, sub)} existing={c.subCategories} />
+            </div>
+          ))
+        )}
+      </div>
+
+      {deleteTarget && (
+        <ConfirmDelete
+          name={deleteTarget.name}
+          busy={deleting}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function AddSubInline({
+  onAdd,
+  existing,
+}: {
+  onAdd: (sub: string) => void;
+  existing: string[];
+}) {
+  const [value, setValue] = useState('');
+  const add = () => {
+    const s = value.trim().slice(0, 100);
+    if (!s || existing.includes(s)) return;
+    onAdd(s);
+    setValue('');
+  };
+  return (
+    <div className="mt-4 flex gap-2">
+      <input
+        className={`${inputCls} flex-1`}
+        maxLength={100}
+        placeholder="Add a collection (e.g. Cases)"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            add();
+          }
+        }}
+      />
+      <button
+        onClick={add}
+        className="grid w-10 shrink-0 place-items-center rounded-xl border border-line text-muted transition-colors hover:border-brand/40 hover:text-cream"
+        aria-label="Add collection"
+      >
+        <Plus className="h-4 w-4" />
+      </button>
     </div>
   );
 }

@@ -21,6 +21,10 @@ export default function Shell() {
                     Terms &amp; Conditions
                   </Link>
                   <span aria-hidden="true">·</span>
+                  <Link to="/privacy" className="transition-colors hover:text-cream">
+                    Data Policy
+                  </Link>
+                  <span aria-hidden="true">·</span>
                   <Link to="/sell" className="font-semibold text-cream/80 transition-colors hover:text-cream">
                     Become a Vendor
                   </Link>
@@ -28,7 +32,7 @@ export default function Shell() {
                   <span>Created by Gish Israel</span>
                 </span>
                 <span className="font-display tracking-[0.25em] text-cream/30">
-                  WEAR THE FUTURE — CYBERNEXUS
+                  GET DISCOVERED — CYBERNEXUS
                 </span>
               </footer>
             </main>

@@ -1,33 +1,90 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BadgeCheck, Lock, MessageCircle, SearchX, Store } from 'lucide-react';
-import { getMarketVendorProducts, getVendor, getVendorContact, type MarketVendorProduct, type Vendor, type VendorContact } from '../lib/vendors';
+import { getMarketVendorProducts, getVendor, getVendorContact, type MarketVendorProduct, type Vendor, type VendorContact, type VendorStoreCategory } from '../lib/vendors';
 import { fmt } from '../lib/format';
+import CategoryChips from '../components/CategoryChips';
+
+const ALL_OPTIONS = [{ id: 'all', label: 'All' }];
 
 export default function VendorStorefront() {
   const { slug = '' } = useParams();
   const [vendor, setVendor] = useState<Vendor | null | undefined>(undefined);
   const [products, setProducts] = useState<MarketVendorProduct[] | null>(null);
+  const [categories, setCategories] = useState<VendorStoreCategory[]>([]);
   const [contact, setContact] = useState<VendorContact | null>(null);
+  const [category, setCategory] = useState('all');
+  const [subCategory, setSubCategory] = useState('all');
 
   useEffect(() => {
     let active = true;
     setVendor(undefined);
     setProducts(null);
+    setCategories([]);
     setContact(null);
+    setCategory('all');
+    setSubCategory('all');
     getVendor(slug).then((v) => {
       if (!active) return;
       setVendor(v);
       if (v) {
         getVendorContact(slug).then((c) => active && setContact(c));
-        getMarketVendorProducts(slug).then((p) => active && setProducts(p));
+        getMarketVendorProducts(slug).then((r) => {
+          if (!active) return;
+          setProducts(r.products);
+          setCategories(r.categories);
+        });
       }
     });
     return () => {
       active = false;
     };
   }, [slug]);
+
+  const categoryOptions = useMemo(() => {
+    const names: string[] = [];
+    const seen = new Set<string>();
+    for (const c of categories) {
+      if (c.name && !seen.has(c.name.toLowerCase())) {
+        seen.add(c.name.toLowerCase());
+        names.push(c.name);
+      }
+    }
+    for (const p of products ?? []) {
+      if (p.category && !seen.has(p.category.toLowerCase())) {
+        seen.add(p.category.toLowerCase());
+        names.push(p.category);
+      }
+    }
+    return [...ALL_OPTIONS, ...names.map((n) => ({ id: n, label: n }))];
+  }, [categories, products]);
+
+  const subs = useMemo(() => {
+    if (category === 'all') return [];
+    const fromTable =
+      categories.find((c) => c.name.toLowerCase() === category.toLowerCase())?.subCategories ?? [];
+    const fromProducts = (products ?? [])
+      .filter((p) => p.category.toLowerCase() === category.toLowerCase() && p.subCategory)
+      .map((p) => p.subCategory as string);
+    return [...new Set([...fromTable, ...fromProducts])];
+  }, [category, categories, products]);
+
+  const filtered = useMemo(() => {
+    if (!products) return [];
+    let out =
+      category === 'all'
+        ? products
+        : products.filter((p) => p.category.toLowerCase() === category.toLowerCase());
+    if (subCategory !== 'all')
+      out = out.filter((p) => (p.subCategory ?? '').toLowerCase() === subCategory.toLowerCase());
+    return out;
+  }, [products, category, subCategory]);
+
+  const handleCategory = (id: string) => {
+    setCategory(id);
+    setSubCategory('all');
+  };
 
   if (vendor === undefined) {
     return (
@@ -124,7 +181,37 @@ export default function VendorStorefront() {
       </header>
 
       <section className="mt-10">
-        <h2 className="font-display text-2xl tracking-wide">PRODUCTS</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-2xl tracking-wide">PRODUCTS</h2>
+          {products !== null && products.length > 0 && (
+            <p className="text-sm text-muted">
+              {filtered.length === products.length
+                ? `${products.length} piece${products.length === 1 ? '' : 's'}`
+                : `${filtered.length} of ${products.length} pieces`}
+            </p>
+          )}
+        </div>
+
+        {products !== null && products.length > 0 && (
+          <div className="mt-4">
+            <CategoryChips value={category} onChange={handleCategory} options={categoryOptions} />
+          </div>
+        )}
+
+        {subs.length > 0 && (
+          <div className="mt-3">
+            <CategoryChips
+              value={subCategory}
+              onChange={setSubCategory}
+              options={[
+                { id: 'all', label: `All ${category}` },
+                ...subs.map((s) => ({ id: s, label: s })),
+              ]}
+              layoutId="sub-chip-store"
+            />
+          </div>
+        )}
+
         {products === null ? (
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -139,9 +226,19 @@ export default function VendorStorefront() {
             <h3 className="font-bold">No products listed yet</h3>
             <p className="text-sm text-muted">This store is setting up — check back soon.</p>
           </div>
+        ) : filtered.length === 0 ? (
+          <div className="mt-8 flex flex-col items-center gap-3 rounded-3xl border border-line bg-card p-10 text-center">
+            <div className="grid h-14 w-14 place-items-center rounded-full bg-card-2 text-muted">
+              <SearchX className="h-6 w-6" />
+            </div>
+            <h3 className="font-bold">Nothing here yet</h3>
+            <p className="text-sm text-muted">
+              No pieces in this selection — try another category.
+            </p>
+          </div>
         ) : (
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {products.map((p, i) => (
+            {filtered.map((p, i) => (
               <StoreProductCard key={p.id} product={p} index={i} />
             ))}
           </div>

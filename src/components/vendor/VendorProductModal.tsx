@@ -1,23 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { X, Loader2, ImagePlus, Plus } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { uploadProductImage, type VendorProductInput } from '../../lib/vendorClient';
+import { getStoreCategories, getVendorCategories, type StoreCategory } from '../../lib/categories';
 import type { VendorProduct } from '../../lib/vendors';
 
 const SIZE_CHIPS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
-
-const CATEGORY_SUGGESTIONS = [
-  'Clothing',
-  'Fabric',
-  'Shoes',
-  'Skincare',
-  'Hair & Beauty',
-  'Jewelry & Accessories',
-  'Art & Craft',
-  'Food & Snacks',
-  'Home & Living',
-  'Gadgets',
-];
 
 const inputCls =
   'w-full rounded-xl border border-line bg-ink px-4 py-2.5 text-sm text-cream ' +
@@ -37,10 +25,13 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 export default function VendorProductModal({
   product,
+  vendorId,
   onClose,
   onSave,
 }: {
   product: VendorProduct | null;
+  /** The signed-in vendor's id — pulls in their custom categories for the picker. */
+  vendorId?: string;
   onClose: () => void;
   onSave: (input: VendorProductInput) => Promise<void>;
 }) {
@@ -52,12 +43,39 @@ export default function VendorProductModal({
   const [sizes, setSizes] = useState<string[]>(['One Size']);
   const [customSize, setCustomSize] = useState('');
   const [colors, setColors] = useState('');
+  const [soldOut, setSoldOut] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<StoreCategory[]>([]);
+
+  const subOptions = useMemo(() => {
+    const q = category.trim().toLowerCase();
+    if (!q) return [];
+    return categoryOptions.find((c) => c.name.toLowerCase() === q)?.subCategories ?? [];
+  }, [categoryOptions, category]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { push } = useToast();
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const [store, mine] = await Promise.all([
+          getStoreCategories(),
+          vendorId ? getVendorCategories(vendorId) : Promise.resolve([]),
+        ]);
+        if (active) setCategoryOptions([...store, ...mine]);
+      } catch {
+        // Picker suggestions are optional — free text still works.
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [vendorId]);
 
   useEffect(() => {
     if (product) {
@@ -69,6 +87,7 @@ export default function VendorProductModal({
       setSizes(product.availableSizes.length ? product.availableSizes : ['One Size']);
       setColors(product.availableColors.join(', '));
       setImagePreview(product.image);
+      setSoldOut(Boolean(product.soldOut));
     } else {
       setName('');
       setPrice('');
@@ -78,6 +97,7 @@ export default function VendorProductModal({
       setSizes(['One Size']);
       setColors('');
       setImagePreview(null);
+      setSoldOut(false);
     }
     setImageFile(null);
     setCustomSize('');
@@ -127,6 +147,7 @@ export default function VendorProductModal({
           .split(',')
           .map((c) => c.trim())
           .filter(Boolean),
+        soldOut,
       });
       onClose();
     } catch (err: any) {
@@ -174,13 +195,18 @@ export default function VendorProductModal({
               <Field label="Category" required>
                 <input className={inputCls} maxLength={100} list="vendor-category-options" placeholder="e.g. Skincare" value={category} onChange={(e) => setCategory(e.target.value)} />
                 <datalist id="vendor-category-options">
-                  {CATEGORY_SUGGESTIONS.map((c) => (
-                    <option key={c} value={c} />
+                  {categoryOptions.map((c) => (
+                    <option key={c.id} value={c.name} />
                   ))}
                 </datalist>
               </Field>
               <Field label="Sub-category">
-                <input className={inputCls} maxLength={100} placeholder="Optional" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} />
+                <input className={inputCls} maxLength={100} list="vendor-subcategory-options" placeholder="Optional" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} />
+                <datalist id="vendor-subcategory-options">
+                  {subOptions.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
               </Field>
             </div>
 
@@ -261,6 +287,29 @@ export default function VendorProductModal({
 
             <Field label="Available Colors">
               <input className={inputCls} placeholder="e.g. Black, White" value={colors} onChange={(e) => setColors(e.target.value)} />
+            </Field>
+
+            <Field label="Sold Out">
+              <div className="flex items-center gap-3 pt-1">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={soldOut}
+                  onClick={() => setSoldOut(!soldOut)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+                    soldOut ? 'bg-brand' : 'bg-card-2'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full shadow-md transition-transform duration-200 ${
+                      soldOut ? 'translate-x-6 bg-ink' : 'translate-x-1 bg-white'
+                    }`}
+                  />
+                </button>
+                <span className="text-sm text-muted">
+                  {soldOut ? 'Buyers see it as Sold Out' : 'Available to buy'}
+                </span>
+              </div>
             </Field>
 
             <div className="flex gap-3 pt-1">
