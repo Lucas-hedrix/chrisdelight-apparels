@@ -62,7 +62,7 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
       transition={{ duration: 0.45, delay: (index % 3) * 0.08, ease: 'easeOut' }}
       className="group rounded-3xl border border-line bg-card p-3 transition-colors hover:border-brand/40"
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-card-2">
+      <div className="relative aspect-4/5 overflow-hidden rounded-2xl bg-card-2">
         {showImage ? (
           <img
             src={product.image ?? ''}

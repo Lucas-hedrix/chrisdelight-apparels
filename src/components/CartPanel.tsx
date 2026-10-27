@@ -181,7 +181,7 @@ function CollapsedRail() {
   const { count, setIsCollapsed, openCart } = useCart();
 
   return (
-    <div className="flex h-screen w-[76px] flex-col items-center gap-4 border-l border-line bg-panel py-6">
+    <div className="flex h-screen w-19 flex-col items-center gap-4 border-l border-line bg-panel py-6">
       <button
         onClick={() => setIsCollapsed(false)}
         className="grid h-11 w-11 place-items-center rounded-full border border-line bg-card text-muted transition-colors hover:border-brand/50 hover:text-cream"
@@ -215,13 +215,13 @@ export default function CartPanel() {
     <>
       <aside
         className={`sticky top-0 hidden h-screen shrink-0 border-line bg-panel xl:block ${
-          isCollapsed ? '' : 'w-[380px] border-l'
+          isCollapsed ? '' : 'w-95 border-l'
         }`}
       >
         {isCollapsed ? (
           <CollapsedRail />
         ) : (
-          <div className="flex h-full w-[380px] flex-col">
+          <div className="flex h-full w-95 flex-col">
             <CartContent headerAction={() => setIsCollapsed(true)} />
           </div>
         )}
